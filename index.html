@@ -117,7 +117,6 @@
     }
 
     .hero-doodles {
-      display: none;
       position: absolute;
       inset: 0;
       z-index: 0;
@@ -142,6 +141,7 @@
     }
 
     .doodle-purple {
+      display: none;
       transform: translate(var(--purple-x, 0), var(--purple-y, 0)) rotate(var(--purple-r, 0deg));
     }
 
@@ -156,9 +156,9 @@
     }
 
     .hero-flower {
-      display: none;
       position: absolute;
       z-index: 0;
+      display: block;
       width: clamp(48px, 4.6vw, 64px);
       height: auto;
       aspect-ratio: 1;
@@ -171,12 +171,14 @@
     }
 
     .hero-flower-purple {
+      display: none;
       top: clamp(52px, 10vh, 96px);
       left: clamp(8px, 1.5vw, 24px);
       width: clamp(46px, 4.2vw, 58px);
     }
 
     .hero-flower-yellow {
+      display: none;
       right: clamp(12px, 2.5vw, 40px);
       bottom: clamp(56px, 10vh, 128px);
       width: clamp(50px, 4.8vw, 66px);
@@ -716,7 +718,6 @@
     }
 
     .section-thread {
-      display: none;
       position: absolute;
       left: 0;
       top: -46px;
@@ -773,7 +774,6 @@
     }
 
     .section-sketches {
-      display: none;
       position: absolute;
       top: -68px;
       right: -42px;
@@ -924,7 +924,7 @@
 
     .registration::before,
     .registration::after {
-      content: none;
+      content: "";
       position: absolute;
       z-index: 0;
       pointer-events: none;
@@ -1005,7 +1005,7 @@
     }
 
     .registration-media::before {
-      content: none;
+      content: "";
       position: absolute;
       z-index: 0;
       top: 10%;
@@ -1749,7 +1749,7 @@
       }
 
       .hero-programma-divider {
-        display: none;
+        display: block;
         z-index: 4;
         width: 100%;
         max-width: 100%;
@@ -1761,7 +1761,7 @@
       }
 
       .hero-programma-divider .section-mobile-wave {
-        display: none;
+        display: block;
         position: relative;
         top: auto;
         left: 0;
@@ -1803,7 +1803,7 @@
       }
 
       .hero-orange-mobile {
-        display: none;
+        display: block;
         position: absolute;
         top: clamp(24px, 7vw, 42px);
         right: -2%;
@@ -2354,6 +2354,140 @@
       window.addEventListener("hashchange", function () {
         handleRegistrationHash("smooth");
       });
+    })();
+
+    (function () {
+      var ENABLE_DECOR_SCROLL_ANIMATION = false;
+      var hero = document.querySelector(".hero");
+      var programSection = document.getElementById("programma");
+      var registrationSection = document.getElementById("registrazione");
+      var mobileWave = document.querySelector(".section-mobile-wave");
+      var mobileWaveDivider = document.querySelector(".hero-programma-divider");
+      var mobileWaveQuery = window.matchMedia("(max-width: 680px)");
+      if (!ENABLE_DECOR_SCROLL_ANIMATION || !hero || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      var ticking = false;
+
+      function clamp(value, min, max) {
+        return Math.min(Math.max(value, min), max);
+      }
+
+      function updateDoodles() {
+        var rect = hero.getBoundingClientRect();
+        var progress = clamp(-rect.top / Math.max(rect.height, 1), 0, 1);
+        var ease = progress * (2 - progress);
+
+        hero.style.setProperty("--orange-x", (-90 * ease).toFixed(2) + "px");
+        hero.style.setProperty("--orange-y", (52 * ease).toFixed(2) + "px");
+        hero.style.setProperty("--orange-r", (13 * ease).toFixed(2) + "deg");
+
+        hero.style.setProperty("--purple-x", (72 * ease).toFixed(2) + "px");
+        hero.style.setProperty("--purple-y", (-38 * ease).toFixed(2) + "px");
+        hero.style.setProperty("--purple-r", (-8 * ease).toFixed(2) + "deg");
+
+        hero.style.setProperty("--star-y", (86 * ease).toFixed(2) + "px");
+        hero.style.setProperty("--star-r", (95 * ease).toFixed(2) + "deg");
+        hero.style.setProperty("--star-scale", (1 + 0.08 * ease).toFixed(3));
+        hero.style.setProperty("--star-opacity", (1 - 0.28 * ease).toFixed(3));
+
+        hero.style.setProperty("--star-yellow-x", (-18 * ease).toFixed(2) + "px");
+        hero.style.setProperty("--star-yellow-y", (34 * ease).toFixed(2) + "px");
+        hero.style.setProperty("--star-yellow-r", (-120 * ease).toFixed(2) + "deg");
+        hero.style.setProperty("--star-yellow-scale", (1 + 0.06 * ease).toFixed(3));
+        hero.style.setProperty("--star-yellow-opacity", (1 - 0.12 * ease).toFixed(3));
+
+        if (programSection && !mobileWaveQuery.matches) {
+          var programRect = programSection.getBoundingClientRect();
+          var programScroll = Math.max(0, window.innerHeight - programRect.top);
+          var programMove = programScroll * 0.28;
+          var sketchMove = programScroll * 0.16;
+          programSection.style.setProperty("--section-thread-x", (-programMove).toFixed(2) + "px");
+          programSection.style.setProperty("--section-thread-r", (-programMove * 0.012).toFixed(2) + "deg");
+          programSection.style.setProperty("--section-sketch-x", (-sketchMove).toFixed(2) + "px");
+          programSection.style.setProperty("--section-sketch-y", (sketchMove * 0.42).toFixed(2) + "px");
+          programSection.style.setProperty("--section-sketch-r", (sketchMove * 0.018).toFixed(2) + "deg");
+        }
+
+        if (mobileWave && mobileWaveDivider && mobileWaveQuery.matches) {
+          var dividerRect = mobileWaveDivider.getBoundingClientRect();
+          var viewportH = window.innerHeight;
+          var waveTravel = (viewportH + dividerRect.height) * 0.95;
+          var waveProgress = clamp((viewportH - dividerRect.top) / Math.max(waveTravel, 1), 0, 1);
+          var wavePhase = waveProgress * Math.PI * 9;
+          var waveDrift = (waveProgress - 0.5) * 16;
+          var waveX = Math.max(-8, Math.min(8, waveDrift + Math.sin(wavePhase * 0.92) * 9 * waveProgress));
+          var waveY = Math.cos(wavePhase * 1.14) * 3 * waveProgress;
+          var waveR = Math.sin(wavePhase * 0.76) * 5 * waveProgress;
+          mobileWave.style.setProperty("--mobile-wave-x", waveX.toFixed(2) + "px");
+          mobileWave.style.setProperty("--mobile-wave-y", waveY.toFixed(2) + "px");
+          mobileWave.style.setProperty("--mobile-wave-r", waveR.toFixed(2) + "deg");
+        } else if (mobileWave) {
+          mobileWave.style.setProperty("--mobile-wave-x", "0px");
+          mobileWave.style.setProperty("--mobile-wave-y", "0px");
+          mobileWave.style.setProperty("--mobile-wave-r", "0deg");
+        }
+
+        if (registrationSection) {
+          var registrationRect = registrationSection.getBoundingClientRect();
+          var registrationProgress = clamp((window.innerHeight - registrationRect.top) / Math.max(window.innerHeight + registrationRect.height, 1), 0, 1);
+          var registrationEase = registrationProgress * (2 - registrationProgress);
+          var wobblePhase = registrationProgress * Math.PI * 8;
+
+          var violetWobbleX = Math.sin(wobblePhase * 0.95 + 0.2) * 16 * registrationEase;
+          var violetWobbleY = Math.cos(wobblePhase * 1.15 + 0.5) * 14 * registrationEase;
+          var violetWobbleR = Math.sin(wobblePhase * 0.75 + 1.1) * 24 * registrationEase + registrationEase * 14;
+          var violetWobbleS = 1 + Math.sin(wobblePhase * 1.35) * 0.08 * registrationEase;
+          var violetSkew = Math.sin(wobblePhase * 1.05) * 5 * registrationEase;
+          var violetBrShift = Math.sin(wobblePhase * 1.2) * 9 * registrationEase;
+
+          var smallWobbleX = Math.sin(wobblePhase) * 14 * registrationEase;
+          var smallWobbleY = Math.cos(wobblePhase * 1.25) * 12 * registrationEase;
+          var smallWobbleR = Math.sin(wobblePhase * 0.85) * 18 * registrationEase + registrationEase * 22;
+          var smallWobbleS = 1 + Math.sin(wobblePhase * 1.6) * 0.06 * registrationEase;
+
+          var altWobbleX = Math.sin(wobblePhase + 1.4) * 11 * registrationEase;
+          var altWobbleY = Math.cos(wobblePhase * 1.1 + 0.8) * 13 * registrationEase;
+          var altWobbleR = Math.sin(wobblePhase * 1.15 + 0.6) * 22 * registrationEase - registrationEase * 16;
+          var altWobbleS = 1 + Math.sin(wobblePhase * 1.4 + 1) * 0.05 * registrationEase;
+
+          registrationSection.style.setProperty("--form-blob-x", violetWobbleX.toFixed(2) + "px");
+          registrationSection.style.setProperty("--form-blob-y", violetWobbleY.toFixed(2) + "px");
+          registrationSection.style.setProperty("--form-blob-r", violetWobbleR.toFixed(2) + "deg");
+          registrationSection.style.setProperty("--form-blob-s", violetWobbleS.toFixed(3));
+          registrationSection.style.setProperty("--form-blob-skew", violetSkew.toFixed(2) + "deg");
+          registrationSection.style.setProperty(
+            "--violet-br",
+            (47 + violetBrShift).toFixed(1) + "% " +
+            (53 - violetBrShift * 0.6).toFixed(1) + "% " +
+            (52 + violetBrShift * 0.4).toFixed(1) + "% " +
+            (48 - violetBrShift).toFixed(1) + "% / " +
+            (52 - violetBrShift * 0.5).toFixed(1) + "% " +
+            (48 + violetBrShift).toFixed(1) + "% " +
+            (53 - violetBrShift * 0.7).toFixed(1) + "% " +
+            (47 + violetBrShift * 0.3).toFixed(1) + "%"
+          );
+          registrationSection.style.setProperty("--form-blob-small-x", smallWobbleX.toFixed(2) + "px");
+          registrationSection.style.setProperty("--form-blob-small-y", smallWobbleY.toFixed(2) + "px");
+          registrationSection.style.setProperty("--form-blob-small-r", smallWobbleR.toFixed(2) + "deg");
+          registrationSection.style.setProperty("--form-blob-small-s", smallWobbleS.toFixed(3));
+          registrationSection.style.setProperty("--form-blob-alt-x", altWobbleX.toFixed(2) + "px");
+          registrationSection.style.setProperty("--form-blob-alt-y", altWobbleY.toFixed(2) + "px");
+          registrationSection.style.setProperty("--form-blob-alt-r", altWobbleR.toFixed(2) + "deg");
+          registrationSection.style.setProperty("--form-blob-alt-s", altWobbleS.toFixed(3));
+        }
+
+        ticking = false;
+      }
+
+      function requestDoodleUpdate() {
+        if (ticking) return;
+        ticking = true;
+        window.requestAnimationFrame(updateDoodles);
+      }
+
+      updateDoodles();
+      window.addEventListener("scroll", requestDoodleUpdate, { passive: true });
+      window.addEventListener("resize", requestDoodleUpdate);
     })();
 
     var googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLScCsH0PqSwHkilZIjnj96qfnxSB4bW1ND3KAHJKrOPkpbMdug/formResponse";
