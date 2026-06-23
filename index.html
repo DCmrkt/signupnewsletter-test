@@ -137,6 +137,7 @@
     }
 
     .doodle-orange {
+      display: none;
       transform: translate(calc(4px + var(--orange-x, 0)), calc(6px + var(--orange-y, 0))) rotate(var(--orange-r, 0deg));
     }
 
@@ -171,14 +172,12 @@
     }
 
     .hero-flower-purple {
-      display: none;
       top: clamp(52px, 10vh, 96px);
       left: clamp(8px, 1.5vw, 24px);
       width: clamp(46px, 4.2vw, 58px);
     }
 
     .hero-flower-yellow {
-      display: none;
       right: clamp(12px, 2.5vw, 40px);
       bottom: clamp(56px, 10vh, 128px);
       width: clamp(50px, 4.8vw, 66px);
@@ -725,7 +724,7 @@
       width: min(520px, 34vw);
       height: 560px;
       pointer-events: none;
-      transform: translateX(var(--section-thread-x, 0)) rotate(var(--section-thread-r, 0deg));
+      transform: translateX(var(--section-thread-x, -420px)) rotate(var(--section-thread-r, -5deg));
       transform-origin: 18% 12%;
       will-change: transform;
     }
@@ -1803,7 +1802,7 @@
       }
 
       .hero-orange-mobile {
-        display: block;
+        display: none;
         position: absolute;
         top: clamp(24px, 7vw, 42px);
         right: -2%;
