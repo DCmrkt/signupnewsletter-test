@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="Registrati al webinar gratuito Direct Channel Academy per nonprofit: metodo, CRM, dati e collaborazione al servizio della crescita." />
+  <meta name="description" content="Registrati al webinar gratuito Direct Channel Academy dedicato al progetto Modulo Volontari: un incontro per conoscere il progetto e raccogliere le esigenze della community." />
   <link rel="icon" type="image/png" sizes="180x180" href="assets/apple-touch-icon.png" />
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
-  <title>Direct Channel Academy | Webinar gratuito</title>
+  <title>Progetto Modulo Volontari | Webinar Direct Channel Academy</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -117,6 +117,7 @@
     }
 
     .hero-doodles {
+      display: none;
       position: absolute;
       inset: 0;
       z-index: 0;
@@ -155,9 +156,9 @@
     }
 
     .hero-flower {
+      display: none;
       position: absolute;
       z-index: 0;
-      display: block;
       width: clamp(48px, 4.6vw, 64px);
       height: auto;
       aspect-ratio: 1;
@@ -465,6 +466,31 @@
       font-weight: 500;
     }
 
+    .event-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      max-width: 650px;
+      margin: -12px 0 22px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .event-meta li {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      border: 1px solid rgba(227, 6, 19, 0.14);
+      border-radius: 999px;
+      padding: 0 12px;
+      background: rgba(255, 255, 255, 0.68);
+      color: var(--red-dark);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
     .button,
     .btn {
       display: inline-flex;
@@ -690,6 +716,7 @@
     }
 
     .section-thread {
+      display: none;
       position: absolute;
       left: 0;
       top: -46px;
@@ -746,6 +773,7 @@
     }
 
     .section-sketches {
+      display: none;
       position: absolute;
       top: -68px;
       right: -42px;
@@ -896,7 +924,7 @@
 
     .registration::before,
     .registration::after {
-      content: "";
+      content: none;
       position: absolute;
       z-index: 0;
       pointer-events: none;
@@ -977,7 +1005,7 @@
     }
 
     .registration-media::before {
-      content: "";
+      content: none;
       position: absolute;
       z-index: 0;
       top: 10%;
@@ -1721,7 +1749,7 @@
       }
 
       .hero-programma-divider {
-        display: block;
+        display: none;
         z-index: 4;
         width: 100%;
         max-width: 100%;
@@ -1733,7 +1761,7 @@
       }
 
       .hero-programma-divider .section-mobile-wave {
-        display: block;
+        display: none;
         position: relative;
         top: auto;
         left: 0;
@@ -1775,7 +1803,7 @@
       }
 
       .hero-orange-mobile {
-        display: block;
+        display: none;
         position: absolute;
         top: clamp(24px, 7vw, 42px);
         right: -2%;
@@ -2003,7 +2031,7 @@
           <a class="header-logo" href="#" aria-label="Direct Channel">
             <img src="assets/direct-channel-logo.png" alt="Direct Channel" width="800" height="376" loading="eager" />
           </a>
-          <span class="live-status">Webinar gratuito</span>
+          <span class="live-status">30 giugno &middot; online</span>
         </div>
       </header>
 
@@ -2049,19 +2077,24 @@
       <div class="wrap hero-grid">
         <div class="hero-content">
           <div class="hero-intro">
-            <p class="badge">LIVE WEBINAR • ISCRIZIONE GRATUITA</p>
-            <h1>Il mondo <span class="rotating-highlight">agile</span> per il nonprofit</h1>
+            <p class="badge">LIVE WEBINAR &middot; ISCRIZIONE GRATUITA</p>
+            <h1>Progetto modulo <span class="rotating-highlight">Volontari</span></h1>
           </div>
 
           <div class="hero-body">
             <p class="hero-copy">
-              Un incontro Direct Channel Academy per trasformare metodo, CRM e dati in un modo di lavorare pi&ugrave; chiaro, collaborativo e misurabile.
+              Un incontro per conoscere il progetto del modulo Volontari e raccogliere le esigenze della community.
             </p>
+            <ul class="event-meta" aria-label="Data e modalit&agrave; webinar">
+              <li>30 giugno</li>
+              <li>11:30 - 12:30</li>
+              <li>Online</li>
+            </ul>
             <div class="hero-actions-row">
-              <a class="button" href="#iscrizione">Registrati al webinar</a>
+              <a class="button" href="#iscrizione">Registrati</a>
               <a class="button secondary" href="#programma">Scopri di pi&ugrave;</a>
             </div>
-            <p class="hero-note">Pensato per team fundraising, comunicazione, servizi e direzione che vogliono far crescere processi e relazioni con semplicit&agrave;.</p>
+            <p class="hero-note">Partecipa per contribuire alla conversazione e aiutarci a costruire uno strumento davvero utile per chi lavora ogni giorno con i volontari.</p>
           </div>
         </div>
 
@@ -2113,13 +2146,13 @@
       <div class="wrap talk-grid">
         <div>
           <p class="kicker">Di cosa parleremo</p>
-          <h2 class="section-title">Meno attrito, pi&ugrave; <span class="rotating-highlight rotating-highlight--phase-yellow">direzione</span> nei progetti digitali.</h2>
+          <h2 class="section-title">Un nuovo modulo da costruire <span class="rotating-highlight rotating-highlight--phase-yellow">insieme</span>.</h2>
           <div class="editorial-copy">
             <p>
-              Il webinar mostra come applicare un approccio agile a campagne, processi e progetti di comunicazione senza perdere controllo su obiettivi, tempi e risultati.
+              Marted&igrave; 30 giugno, dalle 11:30 alle 12:30, saremo in aula con Nicola Sabbatino per presentarti il progetto del Modulo Volontari, pensato per rendere pi&ugrave; semplice la gestione delle persone che supportano la tua organizzazione.
             </p>
             <p>
-              Partiremo da situazioni reali del nonprofit: priorit&agrave; che cambiano, dati distribuiti, team con competenze diverse e bisogno di decisioni pi&ugrave; rapide. L'obiettivo &egrave; rendere il lavoro pi&ugrave; leggibile, condiviso e orientato all'impatto.
+              Ti presenteremo come immaginiamo noi questo modulo, ma ci piacerebbe soprattutto capire come lo immagini tu. Sar&agrave; il primo passo per costruire insieme uno strumento davvero utile e vicino alle esigenze di chi lavora ogni giorno con i volontari.
             </p>
           </div>
         </div>
@@ -2127,11 +2160,11 @@
         <div id="mobileFormAnchor" hidden></div>
         <aside class="focus-card" aria-label="Focus del webinar">
           <h3>Focus dell'incontro</h3>
-          <p>Un percorso pratico per collegare metodo, collaborazione e strumenti digitali in modo semplice.</p>
+          <p>Un confronto concreto per raccogliere idee, bisogni e priorit&agrave; della community.</p>
           <ul class="focus-list">
-            <li>Definire priorit&agrave; chiare tra obiettivi e risorse.</li>
-            <li>Rendere CRM e Business Intelligence pi&ugrave; utili al lavoro quotidiano.</li>
-            <li>Creare rituali leggeri per allineare persone, dati e decisioni.</li>
+            <li>Anagrafica e registro volontari.</li>
+            <li>Organizzazione dei turni.</li>
+            <li>Idee, esigenze e spunti per co-progettare il modulo.</li>
           </ul>
         </aside>
       </div>
@@ -2142,28 +2175,28 @@
         <div class="registration-left">
           <div class="registration-media">
             <figure class="registration-visual">
-              <img src="assets/community-lab-photo.png" alt="Community Lab Day Direct Channel: opuscolo su tavolo con grafiche colorate" width="1024" height="1024" loading="lazy" />
+              <img src="assets/community-lab-photo.png" alt="Materiali Direct Channel per momenti di incontro e confronto con la community" width="1024" height="1024" loading="lazy" />
             </figure>
             <div class="registration-copy">
               <p class="kicker">Webinar gratuito</p>
-              <h3>Un incontro pensato per team nonprofit</h3>
-              <p>Fundraising, comunicazione, servizi e direzione: un momento per confrontarsi su metodo, CRM e dati con un approccio pi&ugrave; chiaro e collaborativo.</p>
-              <p>Registrati per ricevere il link di accesso e partecipare alla sessione live con spazio per domande e confronto.</p>
+              <h3>La community si incontra qui</h3>
+              <p>Ogni webinar &egrave; un'occasione per alzare lo sguardo, condividere esperienze e confrontarsi con chi vive ogni giorno sfide simili alle tue.</p>
+              <p>Registrati per partecipare all'incontro e contribuire alla conversazione.</p>
             </div>
           </div>
 
           <div class="resource-grid" aria-label="Archivio webinar e Community Direct Channel">
-            <a class="resource-card" href="https://supporto.directchannel.it/portal/it/kb/articles/metodologia-agile-e-nonprofit" target="_blank" rel="noopener noreferrer">
+            <a class="resource-card" href="https://supporto.directchannel.it/portal/it/kb" target="_blank" rel="noopener noreferrer">
               <span class="resource-kicker">Archivio webinar</span>
-              <h2>Esplora l'Academy</h2>
-              <p>Rivedi gli ultimi webinar e scopri contenuti utili per approfondire, imparare e crescere ogni giorno.</p>
+              <h2>Lasciati ispirare</h2>
+              <p>Accedi all'archivio dei webinar per continuare a imparare da casi concreti ed esperienze condivise.</p>
               <span class="text-link">Vai all'archivio</span>
             </a>
 
             <a class="resource-card" href="https://supporto.directchannel.it/portal/it/community/direct-channel-community" target="_blank" rel="noopener noreferrer">
               <span class="resource-kicker">Community</span>
-              <h2>Confrontati con la community</h2>
-              <p>Condividi idee, esperienze e domande nello spazio pensato per te e per il mondo nonprofit.</p>
+              <h2>Allarga il confronto</h2>
+              <p>Il webinar &egrave; solo l'inizio: continua a scambiare idee, domande ed esperienze con la community. Perch&eacute; &egrave; dal confronto che nasce l'innovazione.</p>
               <span class="text-link">Entra nella community</span>
             </a>
           </div>
@@ -2173,8 +2206,8 @@
         <div class="registration-form" id="iscrizione">
           <div class="form-title">
             <p class="kicker">Registrazione</p>
-            <h2>Partecipa al webinar</h2>
-            <p>Inserisci i tuoi dati per confermare l'iscrizione gratuita.</p>
+            <h2>Iscriviti all'incontro</h2>
+            <p>Inserisci i tuoi dati per confermare la partecipazione gratuita.</p>
           </div>
 
           <form id="contactForm" novalidate>
@@ -2214,7 +2247,7 @@
                 </div>
               </div>
             </div>
-            <button class="btn" id="submitBtn" type="submit">Registrati al webinar</button>
+            <button class="btn" id="submitBtn" type="submit">Registrati</button>
           </form>
 
           <div id="status" class="status" role="status" aria-live="polite"></div>
@@ -2323,139 +2356,6 @@
       });
     })();
 
-    (function () {
-      var hero = document.querySelector(".hero");
-      var programSection = document.getElementById("programma");
-      var registrationSection = document.getElementById("registrazione");
-      var mobileWave = document.querySelector(".section-mobile-wave");
-      var mobileWaveDivider = document.querySelector(".hero-programma-divider");
-      var mobileWaveQuery = window.matchMedia("(max-width: 680px)");
-      if (!hero || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-      var ticking = false;
-
-      function clamp(value, min, max) {
-        return Math.min(Math.max(value, min), max);
-      }
-
-      function updateDoodles() {
-        var rect = hero.getBoundingClientRect();
-        var progress = clamp(-rect.top / Math.max(rect.height, 1), 0, 1);
-        var ease = progress * (2 - progress);
-
-        hero.style.setProperty("--orange-x", (-90 * ease).toFixed(2) + "px");
-        hero.style.setProperty("--orange-y", (52 * ease).toFixed(2) + "px");
-        hero.style.setProperty("--orange-r", (13 * ease).toFixed(2) + "deg");
-
-        hero.style.setProperty("--purple-x", (72 * ease).toFixed(2) + "px");
-        hero.style.setProperty("--purple-y", (-38 * ease).toFixed(2) + "px");
-        hero.style.setProperty("--purple-r", (-8 * ease).toFixed(2) + "deg");
-
-        hero.style.setProperty("--star-y", (86 * ease).toFixed(2) + "px");
-        hero.style.setProperty("--star-r", (95 * ease).toFixed(2) + "deg");
-        hero.style.setProperty("--star-scale", (1 + 0.08 * ease).toFixed(3));
-        hero.style.setProperty("--star-opacity", (1 - 0.28 * ease).toFixed(3));
-
-        hero.style.setProperty("--star-yellow-x", (-18 * ease).toFixed(2) + "px");
-        hero.style.setProperty("--star-yellow-y", (34 * ease).toFixed(2) + "px");
-        hero.style.setProperty("--star-yellow-r", (-120 * ease).toFixed(2) + "deg");
-        hero.style.setProperty("--star-yellow-scale", (1 + 0.06 * ease).toFixed(3));
-        hero.style.setProperty("--star-yellow-opacity", (1 - 0.12 * ease).toFixed(3));
-
-        if (programSection && !mobileWaveQuery.matches) {
-          var programRect = programSection.getBoundingClientRect();
-          var programScroll = Math.max(0, window.innerHeight - programRect.top);
-          var programMove = programScroll * 0.28;
-          var sketchMove = programScroll * 0.16;
-          programSection.style.setProperty("--section-thread-x", (-programMove).toFixed(2) + "px");
-          programSection.style.setProperty("--section-thread-r", (-programMove * 0.012).toFixed(2) + "deg");
-          programSection.style.setProperty("--section-sketch-x", (-sketchMove).toFixed(2) + "px");
-          programSection.style.setProperty("--section-sketch-y", (sketchMove * 0.42).toFixed(2) + "px");
-          programSection.style.setProperty("--section-sketch-r", (sketchMove * 0.018).toFixed(2) + "deg");
-        }
-
-        if (mobileWave && mobileWaveDivider && mobileWaveQuery.matches) {
-          var dividerRect = mobileWaveDivider.getBoundingClientRect();
-          var viewportH = window.innerHeight;
-          var waveTravel = (viewportH + dividerRect.height) * 0.95;
-          var waveProgress = clamp((viewportH - dividerRect.top) / Math.max(waveTravel, 1), 0, 1);
-          var wavePhase = waveProgress * Math.PI * 9;
-          var waveDrift = (waveProgress - 0.5) * 16;
-          var waveX = Math.max(-8, Math.min(8, waveDrift + Math.sin(wavePhase * 0.92) * 9 * waveProgress));
-          var waveY = Math.cos(wavePhase * 1.14) * 3 * waveProgress;
-          var waveR = Math.sin(wavePhase * 0.76) * 5 * waveProgress;
-          mobileWave.style.setProperty("--mobile-wave-x", waveX.toFixed(2) + "px");
-          mobileWave.style.setProperty("--mobile-wave-y", waveY.toFixed(2) + "px");
-          mobileWave.style.setProperty("--mobile-wave-r", waveR.toFixed(2) + "deg");
-        } else if (mobileWave) {
-          mobileWave.style.setProperty("--mobile-wave-x", "0px");
-          mobileWave.style.setProperty("--mobile-wave-y", "0px");
-          mobileWave.style.setProperty("--mobile-wave-r", "0deg");
-        }
-
-        if (registrationSection) {
-          var registrationRect = registrationSection.getBoundingClientRect();
-          var registrationProgress = clamp((window.innerHeight - registrationRect.top) / Math.max(window.innerHeight + registrationRect.height, 1), 0, 1);
-          var registrationEase = registrationProgress * (2 - registrationProgress);
-          var wobblePhase = registrationProgress * Math.PI * 8;
-
-          var violetWobbleX = Math.sin(wobblePhase * 0.95 + 0.2) * 16 * registrationEase;
-          var violetWobbleY = Math.cos(wobblePhase * 1.15 + 0.5) * 14 * registrationEase;
-          var violetWobbleR = Math.sin(wobblePhase * 0.75 + 1.1) * 24 * registrationEase + registrationEase * 14;
-          var violetWobbleS = 1 + Math.sin(wobblePhase * 1.35) * 0.08 * registrationEase;
-          var violetSkew = Math.sin(wobblePhase * 1.05) * 5 * registrationEase;
-          var violetBrShift = Math.sin(wobblePhase * 1.2) * 9 * registrationEase;
-
-          var smallWobbleX = Math.sin(wobblePhase) * 14 * registrationEase;
-          var smallWobbleY = Math.cos(wobblePhase * 1.25) * 12 * registrationEase;
-          var smallWobbleR = Math.sin(wobblePhase * 0.85) * 18 * registrationEase + registrationEase * 22;
-          var smallWobbleS = 1 + Math.sin(wobblePhase * 1.6) * 0.06 * registrationEase;
-
-          var altWobbleX = Math.sin(wobblePhase + 1.4) * 11 * registrationEase;
-          var altWobbleY = Math.cos(wobblePhase * 1.1 + 0.8) * 13 * registrationEase;
-          var altWobbleR = Math.sin(wobblePhase * 1.15 + 0.6) * 22 * registrationEase - registrationEase * 16;
-          var altWobbleS = 1 + Math.sin(wobblePhase * 1.4 + 1) * 0.05 * registrationEase;
-
-          registrationSection.style.setProperty("--form-blob-x", violetWobbleX.toFixed(2) + "px");
-          registrationSection.style.setProperty("--form-blob-y", violetWobbleY.toFixed(2) + "px");
-          registrationSection.style.setProperty("--form-blob-r", violetWobbleR.toFixed(2) + "deg");
-          registrationSection.style.setProperty("--form-blob-s", violetWobbleS.toFixed(3));
-          registrationSection.style.setProperty("--form-blob-skew", violetSkew.toFixed(2) + "deg");
-          registrationSection.style.setProperty(
-            "--violet-br",
-            (47 + violetBrShift).toFixed(1) + "% " +
-            (53 - violetBrShift * 0.6).toFixed(1) + "% " +
-            (52 + violetBrShift * 0.4).toFixed(1) + "% " +
-            (48 - violetBrShift).toFixed(1) + "% / " +
-            (52 - violetBrShift * 0.5).toFixed(1) + "% " +
-            (48 + violetBrShift).toFixed(1) + "% " +
-            (53 - violetBrShift * 0.7).toFixed(1) + "% " +
-            (47 + violetBrShift * 0.3).toFixed(1) + "%"
-          );
-          registrationSection.style.setProperty("--form-blob-small-x", smallWobbleX.toFixed(2) + "px");
-          registrationSection.style.setProperty("--form-blob-small-y", smallWobbleY.toFixed(2) + "px");
-          registrationSection.style.setProperty("--form-blob-small-r", smallWobbleR.toFixed(2) + "deg");
-          registrationSection.style.setProperty("--form-blob-small-s", smallWobbleS.toFixed(3));
-          registrationSection.style.setProperty("--form-blob-alt-x", altWobbleX.toFixed(2) + "px");
-          registrationSection.style.setProperty("--form-blob-alt-y", altWobbleY.toFixed(2) + "px");
-          registrationSection.style.setProperty("--form-blob-alt-r", altWobbleR.toFixed(2) + "deg");
-          registrationSection.style.setProperty("--form-blob-alt-s", altWobbleS.toFixed(3));
-        }
-
-        ticking = false;
-      }
-
-      function requestDoodleUpdate() {
-        if (ticking) return;
-        ticking = true;
-        window.requestAnimationFrame(updateDoodles);
-      }
-
-      updateDoodles();
-      window.addEventListener("scroll", requestDoodleUpdate, { passive: true });
-      window.addEventListener("resize", requestDoodleUpdate);
-    })();
-
     var googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLScCsH0PqSwHkilZIjnj96qfnxSB4bW1ND3KAHJKrOPkpbMdug/formResponse";
     var forms = [
       {
@@ -2487,12 +2387,12 @@
       var autoCloseTimer = null;
       var confettiColors = ["#e30613", "#facc15", "#22c55e", "#a855f7", "#ff8a3d", "#86efac"];
       var webinarEventConfig = {
-        title: "Il mondo agile per il nonprofit - Direct Channel Academy",
-        startLocal: "20260626T110000",
-        endLocal: "20260626T120000",
+        title: "Progetto Modulo Volontari - Direct Channel Academy",
+        startLocal: "20260630T113000",
+        endLocal: "20260630T123000",
         timezone: "Europe/Rome",
         meetUrl: "https://meet.google.com/dcx-webinar-room",
-        description: "Webinar gratuito Direct Channel Academy su metodo agile, CRM e dati per il nonprofit."
+        description: "Webinar gratuito Direct Channel Academy dedicato al progetto Modulo Volontari e alla raccolta delle esigenze della community."
       };
 
       function buildGoogleCalendarUrl() {
@@ -2854,7 +2754,7 @@
         window.setTimeout(function () {
           config.form.reset();
           config.button.disabled = false;
-          config.button.textContent = "Registrati al webinar";
+          config.button.textContent = "Registrati";
           config.status.className = "status";
           if (typeof window.showRegistrationSuccess === "function") {
             window.showRegistrationSuccess();
