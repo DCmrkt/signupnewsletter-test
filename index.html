@@ -590,13 +590,14 @@
     .hero-mascot video {
       position: absolute;
       right: clamp(-48px, -5vw, -12px);
-      top: 0;
-      bottom: auto;
+      bottom: 0;
+      top: auto;
       width: min(437px, 36.8vw);
       max-width: none;
       height: auto;
       display: block;
       object-fit: contain;
+      object-position: right bottom;
       filter: drop-shadow(0 26px 40px rgba(48, 31, 24, 0.16));
       transition: opacity 220ms ease;
     }
@@ -607,16 +608,16 @@
     .hero-mascot.is-winter video {
       width: min(518px, 43.7vw);
       right: clamp(-56px, -6vw, -16px);
-      top: 0;
-      bottom: auto;
+      bottom: 0;
+      top: auto;
     }
 
     .hero-mascot.is-autumn img,
     .hero-mascot.is-autumn video {
       width: min(403px, 34.5vw);
       right: clamp(-40px, -4vw, -8px);
-      top: 4px;
-      bottom: auto;
+      bottom: 0;
+      top: auto;
     }
 
     .form-title {
