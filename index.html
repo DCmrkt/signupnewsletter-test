@@ -1020,6 +1020,9 @@
       position: relative;
       isolation: isolate;
       overflow: visible;
+      border-top: none;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
     }
 
     .registration-media::before {
@@ -1053,10 +1056,10 @@
       position: relative;
       z-index: 2;
       width: 100%;
-      margin: 0;
+      margin: calc(-1 * var(--balloon-headroom)) 0 0;
       flex: 0 0 auto;
       overflow: visible;
-      border-radius: var(--radius) var(--radius) 0 0;
+      border-radius: 0;
       background: transparent;
       line-height: 0;
     }
@@ -1066,7 +1069,7 @@
       width: 100%;
       height: auto;
       max-width: none;
-      margin-top: calc(-1 * var(--balloon-headroom));
+      margin-top: 0;
       transform: none;
       filter: drop-shadow(0 22px 34px rgba(48, 31, 24, 0.2));
     }
@@ -1616,6 +1619,7 @@
       }
 
       .registration-visual {
+        margin-top: 0;
         margin-bottom: 0;
         border-radius: 0;
         background: var(--balloon-sky);
