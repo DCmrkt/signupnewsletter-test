@@ -572,7 +572,7 @@
       height: auto;
       margin: 0;
       isolation: isolate;
-      transform: translate(-10vw, 10vw);
+      transform: translate(4vw, 10vw);
     }
 
     .hero-mascot::before {
@@ -586,30 +586,35 @@
       background: rgba(255, 138, 61, 0.08);
     }
 
-    .hero-mascot img {
+    .hero-mascot img,
+    .hero-mascot video {
       position: absolute;
-      right: clamp(8px, 3vw, 34px);
+      right: clamp(-48px, -5vw, -12px);
       top: 0;
       bottom: auto;
       width: min(380px, 32vw);
       max-width: none;
       height: auto;
       display: block;
+      object-fit: contain;
       filter: drop-shadow(0 26px 40px rgba(48, 31, 24, 0.16));
       transition: opacity 220ms ease;
     }
 
     .hero-mascot.is-summer img,
-    .hero-mascot.is-winter img {
+    .hero-mascot.is-winter img,
+    .hero-mascot.is-summer video,
+    .hero-mascot.is-winter video {
       width: min(450px, 38vw);
-      right: clamp(4px, 2vw, 20px);
+      right: clamp(-56px, -6vw, -16px);
       top: 0;
       bottom: auto;
     }
 
-    .hero-mascot.is-autumn img {
+    .hero-mascot.is-autumn img,
+    .hero-mascot.is-autumn video {
       width: min(350px, 30vw);
-      right: clamp(14px, 3vw, 30px);
+      right: clamp(-40px, -4vw, -8px);
       top: 4px;
       bottom: auto;
     }
@@ -818,7 +823,7 @@
     h2.section-title {
       max-width: 760px;
       margin-bottom: 20px;
-      font-size: clamp(3rem, 6.4vw, 5.9rem);
+      font-size: clamp(3rem, 6.4vw, 4.3rem);
       line-height: 1;
       font-weight: 800;
       letter-spacing: 0;
@@ -1620,20 +1625,24 @@
         min-height: clamp(190px, 34vw, 320px);
       }
 
-      .hero-mascot img {
+      .hero-mascot img,
+      .hero-mascot video {
         width: 100%;
         right: 0;
         top: 0;
       }
 
       .hero-mascot.is-summer img,
-      .hero-mascot.is-winter img {
+      .hero-mascot.is-winter img,
+      .hero-mascot.is-summer video,
+      .hero-mascot.is-winter video {
         width: 108%;
         right: -4%;
         top: 0;
       }
 
-      .hero-mascot.is-autumn img {
+      .hero-mascot.is-autumn img,
+      .hero-mascot.is-autumn video {
         width: 92%;
         right: 0;
         top: 4px;
@@ -1918,7 +1927,8 @@
         width: 78%;
       }
 
-      .hero-mascot img {
+      .hero-mascot img,
+      .hero-mascot video {
         position: absolute;
         right: 0;
         bottom: -4px;
@@ -1927,13 +1937,16 @@
       }
 
       .hero-mascot.is-summer img,
-      .hero-mascot.is-winter img {
+      .hero-mascot.is-winter img,
+      .hero-mascot.is-summer video,
+      .hero-mascot.is-winter video {
         right: 0;
         bottom: -2px;
         width: min(164px, 34vw);
       }
 
-      .hero-mascot.is-autumn img {
+      .hero-mascot.is-autumn img,
+      .hero-mascot.is-autumn video {
         right: 0;
         bottom: 0;
         width: min(136px, 29vw);
@@ -2100,16 +2113,15 @@
         </div>
 
         <figure class="hero-mascot" id="heroMascot" aria-label="Mascotte Direct Channel Academy">
-          <img
-            id="heroMascotImg"
-            src="assets/mascotte-direct-channel-cutout-crop.png"
-            data-default-src="assets/mascotte-direct-channel-cutout-crop.png"
-            data-default-mobile-src="assets/mascotte-direct-channel-mobile.png"
-            data-summer-src="assets/mascotte-summer-cutout.png"
-            data-autumn-src="assets/mascotte-autumn-cutout.png"
-            data-winter-src="assets/mascotte-winter-cutout.png"
-            alt="Mascotte Direct Channel con occhiali e maglia rossa"
-          />
+          <video
+            id="heroMascotVideo"
+            src="assets/mascot-dog.mp4"
+            autoplay
+            muted
+            loop
+            playsinline
+            aria-hidden="true"
+          ></video>
         </figure>
       </div>
     </section>
@@ -2147,7 +2159,7 @@
       <div class="wrap talk-grid">
         <div>
           <p class="kicker">Di cosa parleremo</p>
-          <h2 class="section-title">Un nuovo modulo da costruire <span class="rotating-highlight rotating-highlight--phase-yellow">insieme</span>.</h2>
+          <h2 class="section-title">Un nuovo<br>modulo da costruire <span class="rotating-highlight rotating-highlight--phase-yellow">insieme</span></h2>
           <div class="editorial-copy">
             <p>
               Marted&igrave; 30 giugno, dalle 11:30 alle 12:30, saremo in aula con Nicola Sabbatino per presentarti il progetto del Modulo Volontari, pensato per rendere pi&ugrave; semplice la gestione delle persone che supportano la tua organizzazione.
