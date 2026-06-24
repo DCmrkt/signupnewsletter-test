@@ -1583,6 +1583,10 @@
         align-items: start;
       }
 
+      .registration.section {
+        overflow: visible;
+      }
+
       .registration-left {
         justify-content: flex-start;
         align-self: auto;
@@ -1590,12 +1594,19 @@
 
       .registration-media {
         overflow: visible;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        padding-top: clamp(48px, 13vw, 64px);
       }
 
       .registration-visual {
+        margin-top: calc(-1 * clamp(48px, 13vw, 64px));
         margin-bottom: 0;
         border-radius: 0;
         line-height: 0;
+        padding-top: 0;
+        overflow: visible;
+        flex-shrink: 0;
       }
 
       .registration-copy {
@@ -1603,9 +1614,9 @@
       }
 
       .registration-visual img {
-        margin-top: -14.16%;
+        margin-top: 0;
         transform: none;
-        filter: drop-shadow(0 18px 28px rgba(48, 31, 24, 0.16));
+        filter: none;
       }
 
       .hero-grid {
@@ -1973,6 +1984,10 @@
       .section {
         padding: 62px 0;
         overflow: hidden;
+      }
+
+      .registration.section {
+        overflow: visible;
       }
 
       .section-decor-desktop,
