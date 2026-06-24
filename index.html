@@ -2119,6 +2119,11 @@
           <img
             id="heroMascotImg"
             src="assets/mascot-dog.png"
+            data-default-src="assets/mascot-dog.png"
+            data-default-mobile-src="assets/mascot-dog.png"
+            data-summer-src="assets/mascotte-summer-cutout.png"
+            data-autumn-src="assets/mascotte-autumn-cutout.png"
+            data-winter-src="assets/mascotte-winter-cutout.png"
             alt="Mascotte Direct Channel con occhiali e maglia rossa"
           />
         </figure>
@@ -2936,7 +2941,7 @@
         }
       };
 
-      var defaultDesktopSrc = heroMascotImg.dataset.defaultSrc;
+      var defaultDesktopSrc = heroMascotImg.dataset.defaultSrc || heroMascotImg.getAttribute("src");
       var defaultMobileSrc = heroMascotImg.dataset.defaultMobileSrc || defaultDesktopSrc;
       var defaultMascotQuery = window.matchMedia("(max-width: 680px)");
       var defaultAlt = "Mascotte Direct Channel con occhiali e maglia rossa";
@@ -2947,8 +2952,9 @@
       }
 
       function updateDefaultMascotSrc() {
-        if (!activeSeason) {
-          heroMascotImg.src = getDefaultSrc();
+        var nextSrc = getDefaultSrc();
+        if (!activeSeason && nextSrc) {
+          heroMascotImg.src = nextSrc;
         }
       }
 
@@ -2956,11 +2962,12 @@
         heroMascot.classList.remove("is-summer", "is-autumn", "is-winter");
 
         if (!seasonKey) {
-          heroMascotImg.src = getDefaultSrc();
+          updateDefaultMascotSrc();
           heroMascotImg.alt = defaultAlt;
           activeSeason = null;
         } else {
           var season = seasons[seasonKey];
+          if (!season || !season.src) return;
           heroMascotImg.src = season.src;
           heroMascotImg.alt = season.alt;
           heroMascot.classList.add(season.className);
