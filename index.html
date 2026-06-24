@@ -188,7 +188,7 @@
       z-index: 2;
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: space-between;
       gap: 24px;
       min-height: 44px;
     }
@@ -592,7 +592,7 @@
       right: clamp(-48px, -5vw, -12px);
       top: 0;
       bottom: auto;
-      width: min(380px, 32vw);
+      width: min(437px, 36.8vw);
       max-width: none;
       height: auto;
       display: block;
@@ -605,7 +605,7 @@
     .hero-mascot.is-winter img,
     .hero-mascot.is-summer video,
     .hero-mascot.is-winter video {
-      width: min(450px, 38vw);
+      width: min(518px, 43.7vw);
       right: clamp(-56px, -6vw, -16px);
       top: 0;
       bottom: auto;
@@ -613,7 +613,7 @@
 
     .hero-mascot.is-autumn img,
     .hero-mascot.is-autumn video {
-      width: min(350px, 30vw);
+      width: min(403px, 34.5vw);
       right: clamp(-40px, -4vw, -8px);
       top: 4px;
       bottom: auto;
@@ -1627,7 +1627,7 @@
 
       .hero-mascot img,
       .hero-mascot video {
-        width: 100%;
+        width: 115%;
         right: 0;
         top: 0;
       }
@@ -1636,14 +1636,14 @@
       .hero-mascot.is-winter img,
       .hero-mascot.is-summer video,
       .hero-mascot.is-winter video {
-        width: 108%;
+        width: 124%;
         right: -4%;
         top: 0;
       }
 
       .hero-mascot.is-autumn img,
       .hero-mascot.is-autumn video {
-        width: 92%;
+        width: 106%;
         right: 0;
         top: 4px;
       }
@@ -1786,14 +1786,12 @@
 
       .hero-header {
         min-height: 38px;
-        justify-content: flex-start;
+        justify-content: space-between;
       }
 
       .hero-header-brand {
-        /* flex-direction: row-reverse; */
-        justify-content: space-between;
         min-height: 26px;
-        width: 100%;
+        width: auto;
       }
 
       .header-logo img {
@@ -1932,7 +1930,7 @@
         position: absolute;
         right: 0;
         bottom: -4px;
-        width: min(148px, 31vw);
+        width: min(170px, 35.65vw);
         max-width: none;
       }
 
@@ -1942,14 +1940,14 @@
       .hero-mascot.is-winter video {
         right: 0;
         bottom: -2px;
-        width: min(164px, 34vw);
+        width: min(189px, 39.1vw);
       }
 
       .hero-mascot.is-autumn img,
       .hero-mascot.is-autumn video {
         right: 0;
         bottom: 0;
-        width: min(136px, 29vw);
+        width: min(156px, 33.35vw);
       }
 
       .form-grid {
@@ -2045,8 +2043,8 @@
           <a class="header-logo" href="#" aria-label="Direct Channel">
             <img src="assets/direct-channel-logo.png" alt="Direct Channel" width="800" height="376" loading="eager" />
           </a>
-          <span class="live-status">30 giugno &middot; online</span>
         </div>
+        <span class="live-status">30 giugno &middot; online</span>
       </header>
 
       <svg class="hero-doodles" viewBox="0 0 1440 820" preserveAspectRatio="none" aria-hidden="true">
@@ -2113,15 +2111,11 @@
         </div>
 
         <figure class="hero-mascot" id="heroMascot" aria-label="Mascotte Direct Channel Academy">
-          <video
-            id="heroMascotVideo"
-            src="assets/mascot-dog.mp4"
-            autoplay
-            muted
-            loop
-            playsinline
-            aria-hidden="true"
-          ></video>
+          <img
+            id="heroMascotImg"
+            src="assets/mascot-dog.png"
+            alt="Mascotte Direct Channel con occhiali e maglia rossa"
+          />
         </figure>
       </div>
     </section>
