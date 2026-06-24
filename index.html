@@ -1056,7 +1056,7 @@
       position: relative;
       z-index: 2;
       width: 100%;
-      margin: calc(-1 * var(--balloon-headroom)) 0 0;
+      margin: calc(-1 * var(--balloon-headroom)) 0 -5px;
       flex: 0 0 auto;
       overflow: visible;
       border-radius: 0;
@@ -1070,6 +1070,7 @@
       height: auto;
       max-width: none;
       margin-top: 0;
+      margin-bottom: -5px;
       transform: translate(0px, -5px);
       filter: drop-shadow(0 22px 34px rgba(48, 31, 24, 0.2));
     }
@@ -1077,7 +1078,7 @@
     .registration-copy {
       flex: 1 1 auto;
       position: relative;
-      z-index: 1;
+      z-index: 3;
       background: var(--paper);
       padding: clamp(18px, 2.8vw, 26px);
     }
@@ -1620,7 +1621,7 @@
 
       .registration-visual {
         margin-top: 0;
-        margin-bottom: 0;
+        margin-bottom: -5px;
         border-radius: 0;
         background: var(--balloon-sky);
       }
@@ -1631,6 +1632,7 @@
 
       .registration-visual img {
         margin-top: calc(-1 * var(--balloon-headroom) - 1px);
+        margin-bottom: -5px;
         transform: translate(0px, -5px);
         filter: none;
       }
