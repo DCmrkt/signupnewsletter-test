@@ -1490,10 +1490,6 @@
       color: var(--ink);
     }
 
-    .footer-season-test:hover {
-      color: #22c55e;
-    }
-
     .form-foot {
       margin: 18px 0 0;
       color: var(--muted);
@@ -1593,38 +1589,9 @@
       text-align: center;
     }
 
-    .footer-seasons {
-      display: none !important;
-    }
-
-    .footer-seasons.is-dev-visible {
-      position: absolute;
-      right: max(var(--page-gutter), env(safe-area-inset-right, 0px));
-      bottom: max(18px, env(safe-area-inset-bottom, 0px));
-      display: inline-flex !important;
-      align-items: center;
-      gap: 10px;
-    }
-
+    .footer-seasons,
     .footer-season {
-      border: 0;
-      background: none;
-      padding: 0;
-      color: var(--muted);
-      font: inherit;
-      font-size: var(--font-small);
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: lowercase;
-      cursor: pointer;
-      opacity: 0.72;
-      transition: color 160ms ease, opacity 160ms ease;
-    }
-
-    .footer-season:hover,
-    .footer-season[aria-pressed="true"] {
-      color: var(--red);
-      opacity: 1;
+      display: none !important;
     }
 
     .footer a {
@@ -2313,7 +2280,7 @@
             <p>Inserisci i tuoi dati per confermare la partecipazione gratuita.</p>
           </div>
 
-          <form id="contactForm" novalidate>
+          <form id="contactForm" novalidate data-google-form="https://forms.gle/HMB9dpUezU1sbRWR8">
             <div class="form-grid">
               <div class="field">
                 <label for="nome">Nome <span class="req">*</span></label>
@@ -2376,12 +2343,6 @@
         &middot;
         <a href="https://www.iubenda.com/privacy-policy/8187956/cookie-policy" target="_blank" rel="noopener noreferrer">Cookie policy</a>
       </p>
-    </div>
-    <div class="footer-seasons" aria-label="Versioni stagionali mascotte" hidden>
-      <button type="button" class="footer-season" data-season="summer" aria-pressed="false">summer</button>
-      <button type="button" class="footer-season" data-season="autumn" aria-pressed="false">autumn</button>
-      <button type="button" class="footer-season" data-season="winter" aria-pressed="false">winter</button>
-      <button type="button" class="footer-season footer-season-test" id="testRegistrationSuccess">test</button>
     </div>
   </footer>
 
@@ -2608,6 +2569,8 @@
       window.addEventListener("resize", requestDoodleUpdate);
     })();
 
+    // https://forms.gle/HMB9dpUezU1sbRWR8
+    var googleFormShortUrl = "https://forms.gle/HMB9dpUezU1sbRWR8";
     var googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLScnZzUBggdsrw6YX-d3hVJux0kBLurAnPPM7akmrZ0J4PkAbg/formResponse";
     var forms = [
       {
