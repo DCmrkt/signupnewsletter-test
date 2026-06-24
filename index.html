@@ -533,11 +533,17 @@
       }
     }
 
-    .hero-body p {
-      max-width: 650px;
+    .hero-body p,
+    .registration-copy p:not(.label),
+    .resource-card > p:not(.label) {
       color: var(--muted);
       font-size: var(--font-body);
       line-height: 1.5;
+      font-weight: 500;
+    }
+
+    .hero-body p {
+      max-width: 650px;
     }
 
     .hero-body p:first-child {
@@ -1141,12 +1147,11 @@
       margin: 0 0 12px;
     }
 
-    .registration-copy p.small {
+    .registration-copy p:not(.label) {
       margin: 0;
-      color: var(--muted);
     }
 
-    .registration-copy p.small + p.small {
+    .registration-copy p:not(.label) + p:not(.label) {
       margin-top: 10px;
     }
 
@@ -1527,11 +1532,9 @@
       line-height: 1.2;
     }
 
-    .resource-card p {
+    .resource-card > p:not(.label) {
       flex: 1 0 auto;
       margin: 0 0 14px;
-      color: var(--muted);
-      line-height: 1.5;
     }
 
     .text-link {
@@ -2254,8 +2257,8 @@
             <div class="registration-copy">
               <p class="small label">Webinar gratuito</p>
               <h2>La community si incontra qui</h2>
-              <p class="small">Ogni webinar &egrave; un'occasione per alzare lo sguardo, condividere esperienze e confrontarsi con chi vive ogni giorno sfide simili alle tue.</p>
-              <p class="small">Registrati per partecipare all'incontro e contribuire alla conversazione.</p>
+              <p>Ogni webinar &egrave; un'occasione per alzare lo sguardo, condividere esperienze e confrontarsi con chi vive ogni giorno sfide simili alle tue.</p>
+              <p>Registrati per partecipare all'incontro e contribuire alla conversazione.</p>
             </div>
           </div>
 
