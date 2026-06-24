@@ -1594,11 +1594,14 @@
     }
 
     .footer-seasons {
-      display: none;
+      display: none !important;
+    }
+
+    .footer-seasons.is-dev-visible {
       position: absolute;
       right: max(var(--page-gutter), env(safe-area-inset-right, 0px));
       bottom: max(18px, env(safe-area-inset-bottom, 0px));
-      display: inline-flex;
+      display: inline-flex !important;
       align-items: center;
       gap: 10px;
     }
@@ -2374,7 +2377,7 @@
         <a href="https://www.iubenda.com/privacy-policy/8187956/cookie-policy" target="_blank" rel="noopener noreferrer">Cookie policy</a>
       </p>
     </div>
-    <div class="footer-seasons" aria-label="Versioni stagionali mascotte">
+    <div class="footer-seasons" aria-label="Versioni stagionali mascotte" hidden>
       <button type="button" class="footer-season" data-season="summer" aria-pressed="false">summer</button>
       <button type="button" class="footer-season" data-season="autumn" aria-pressed="false">autumn</button>
       <button type="button" class="footer-season" data-season="winter" aria-pressed="false">winter</button>
