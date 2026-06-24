@@ -572,7 +572,7 @@
       height: auto;
       margin: 0;
       isolation: isolate;
-      transform: translate(4vw, 10vw);
+      transform: translate(-10vw, 10vw);
     }
 
     .hero-mascot::before {
@@ -586,38 +586,32 @@
       background: rgba(255, 138, 61, 0.08);
     }
 
-    .hero-mascot img,
-    .hero-mascot video {
+    .hero-mascot img {
       position: absolute;
-      right: clamp(-48px, -5vw, -12px);
-      bottom: 0;
-      top: auto;
-      width: min(437px, 36.8vw);
+      right: clamp(8px, 3vw, 34px);
+      top: 0;
+      bottom: auto;
+      width: min(380px, 32vw);
       max-width: none;
       height: auto;
       display: block;
-      object-fit: contain;
-      object-position: right bottom;
       filter: drop-shadow(0 26px 40px rgba(48, 31, 24, 0.16));
       transition: opacity 220ms ease;
     }
 
     .hero-mascot.is-summer img,
-    .hero-mascot.is-winter img,
-    .hero-mascot.is-summer video,
-    .hero-mascot.is-winter video {
-      width: min(518px, 43.7vw);
-      right: clamp(-56px, -6vw, -16px);
-      bottom: 0;
-      top: auto;
+    .hero-mascot.is-winter img {
+      width: min(450px, 38vw);
+      right: clamp(4px, 2vw, 20px);
+      top: 0;
+      bottom: auto;
     }
 
-    .hero-mascot.is-autumn img,
-    .hero-mascot.is-autumn video {
-      width: min(403px, 34.5vw);
-      right: clamp(-40px, -4vw, -8px);
-      bottom: 0;
-      top: auto;
+    .hero-mascot.is-autumn img {
+      width: min(350px, 30vw);
+      right: clamp(14px, 3vw, 30px);
+      top: 4px;
+      bottom: auto;
     }
 
     .form-title {
@@ -1630,25 +1624,21 @@
         min-height: clamp(190px, 34vw, 320px);
       }
 
-      .hero-mascot img,
-      .hero-mascot video {
-        width: 115%;
+      .hero-mascot img {
+        width: 100%;
         right: 0;
         top: 0;
       }
 
       .hero-mascot.is-summer img,
-      .hero-mascot.is-winter img,
-      .hero-mascot.is-summer video,
-      .hero-mascot.is-winter video {
-        width: 124%;
+      .hero-mascot.is-winter img {
+        width: 108%;
         right: -4%;
         top: 0;
       }
 
-      .hero-mascot.is-autumn img,
-      .hero-mascot.is-autumn video {
-        width: 106%;
+      .hero-mascot.is-autumn img {
+        width: 92%;
         right: 0;
         top: 4px;
       }
@@ -1930,29 +1920,25 @@
         width: 78%;
       }
 
-      .hero-mascot img,
-      .hero-mascot video {
+      .hero-mascot img {
         position: absolute;
         right: 0;
         bottom: -4px;
-        width: min(170px, 35.65vw);
+        width: min(148px, 31vw);
         max-width: none;
       }
 
       .hero-mascot.is-summer img,
-      .hero-mascot.is-winter img,
-      .hero-mascot.is-summer video,
-      .hero-mascot.is-winter video {
+      .hero-mascot.is-winter img {
         right: 0;
         bottom: -2px;
-        width: min(189px, 39.1vw);
+        width: min(164px, 34vw);
       }
 
-      .hero-mascot.is-autumn img,
-      .hero-mascot.is-autumn video {
+      .hero-mascot.is-autumn img {
         right: 0;
         bottom: 0;
-        width: min(156px, 33.35vw);
+        width: min(136px, 29vw);
       }
 
       .form-grid {
@@ -2118,9 +2104,9 @@
         <figure class="hero-mascot" id="heroMascot" aria-label="Mascotte Direct Channel Academy">
           <img
             id="heroMascotImg"
-            src="assets/mascot-dog.png"
-            data-default-src="assets/mascot-dog.png"
-            data-default-mobile-src="assets/mascot-dog.png"
+            src="assets/mascotte-direct-channel-cutout-crop.png"
+            data-default-src="assets/mascotte-direct-channel-cutout-crop.png"
+            data-default-mobile-src="assets/mascotte-direct-channel-mobile.png"
             data-summer-src="assets/mascotte-summer-cutout.png"
             data-autumn-src="assets/mascotte-autumn-cutout.png"
             data-winter-src="assets/mascotte-winter-cutout.png"
