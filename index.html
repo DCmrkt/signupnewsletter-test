@@ -27,6 +27,7 @@
       --shadow: 0 22px 70px rgba(48, 31, 24, 0.12);
       --shadow-soft: 0 14px 42px rgba(48, 31, 24, 0.08);
       --radius: 8px;
+      --balloon-headroom: 13.25%;
       --container-max: 1180px;
       --page-gutter: 20px;
       --scroll-thumb: #facc15;
@@ -923,6 +924,10 @@
         linear-gradient(145deg, #fbfaf7 0%, #f7f4ee 46%, #eef8f1 100%);
     }
 
+    .registration.section {
+      overflow: visible;
+    }
+
     .registration::before,
     .registration::after {
       content: "";
@@ -969,7 +974,7 @@
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: clamp(24px, 4.5vw, 48px);
-      align-items: stretch;
+      align-items: start;
     }
 
     .registration-left {
@@ -1042,6 +1047,7 @@
       overflow: visible;
       border-radius: var(--radius) var(--radius) 0 0;
       background: transparent;
+      line-height: 0;
     }
 
     .registration-visual img {
@@ -1049,7 +1055,8 @@
       width: 100%;
       height: auto;
       max-width: none;
-      transform: translateY(-24.04%);
+      margin-top: calc(-1 * var(--balloon-headroom));
+      transform: translateY(calc(-1 * clamp(8px, 1.5vw, 16px)));
       filter: drop-shadow(0 22px 34px rgba(48, 31, 24, 0.2));
     }
 
@@ -1582,30 +1589,19 @@
         align-items: start;
       }
 
-      .registration.section {
-        overflow: visible;
-      }
-
       .registration-left {
         justify-content: flex-start;
         align-self: auto;
       }
 
       .registration-media {
-        overflow: visible;
         border-top-left-radius: 0;
         border-top-right-radius: 0;
-        padding-top: clamp(48px, 13vw, 64px);
       }
 
       .registration-visual {
-        margin-top: calc(-1 * clamp(48px, 13vw, 64px));
         margin-bottom: 0;
         border-radius: 0;
-        line-height: 0;
-        padding-top: 0;
-        overflow: visible;
-        flex-shrink: 0;
       }
 
       .registration-copy {
@@ -1613,7 +1609,6 @@
       }
 
       .registration-visual img {
-        margin-top: 0;
         transform: none;
         filter: none;
       }
@@ -1774,7 +1769,8 @@
       }
 
       main {
-        overflow-x: hidden;
+        overflow-x: clip;
+        overflow-y: visible;
         max-width: 100%;
       }
 
