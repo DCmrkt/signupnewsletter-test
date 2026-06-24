@@ -969,12 +969,13 @@
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: clamp(24px, 4.5vw, 48px);
-      align-items: start;
+      align-items: stretch;
     }
 
     .registration-left {
       display: flex;
       flex-direction: column;
+      justify-content: flex-end;
       gap: clamp(16px, 2.8vw, 22px);
       width: 100%;
       min-width: 0;
@@ -1582,6 +1583,10 @@
       .talk-grid,
       .registration-grid {
         grid-template-columns: 1fr;
+      }
+
+      .registration-left {
+        justify-content: flex-start;
       }
 
       .hero-grid {
