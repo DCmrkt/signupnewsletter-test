@@ -1463,25 +1463,30 @@
       position: absolute;
       top: 16px;
       right: 16px;
-      display: grid;
-      place-items: center;
-      width: 34px;
-      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
       padding: 0;
-      border: 0;
+      border: 1px solid var(--line);
       border-radius: 50%;
-      background: #f7f2ec;
+      background: var(--paper);
       color: var(--muted);
-      font-family: var(--font-family);
-      font-size: var(--font-h2);
-      font-weight: 400;
-      line-height: 1;
       cursor: pointer;
-      transition: background 160ms ease, color 160ms ease;
+      transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+    }
+
+    .success-modal__close svg {
+      display: block;
+      width: 14px;
+      height: 14px;
+      flex: 0 0 auto;
     }
 
     .success-modal__close:hover {
-      background: #efe6dc;
+      background: #f7f2ec;
+      border-color: #cfc3b6;
       color: var(--ink);
     }
 
@@ -2382,7 +2387,11 @@
   <div id="successModal" class="success-modal" hidden aria-hidden="true">
     <div class="success-modal__backdrop" data-close-success></div>
     <div class="success-modal__panel" role="dialog" aria-modal="true" aria-labelledby="successModalTitle">
-      <button type="button" class="success-modal__close" data-close-success aria-label="Chiudi">&times;</button>
+      <button type="button" class="success-modal__close" data-close-success aria-label="Chiudi">
+        <svg viewBox="0 0 14 14" aria-hidden="true" focusable="false">
+          <path d="M1 1 L13 13 M13 1 L1 13" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+        </svg>
+      </button>
       <div class="success-modal__body">
         <div class="success-modal__icon" aria-hidden="true">&#10003;</div>
         <div class="success-modal__copy">
