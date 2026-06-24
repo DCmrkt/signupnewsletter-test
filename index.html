@@ -1138,7 +1138,7 @@
     }
 
     .registration-copy h2 {
-      margin: 0 0 10px;
+      margin: 0 0 12px;
     }
 
     .registration-copy p.small {
@@ -1485,10 +1485,10 @@
     .resource-card {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      align-items: stretch;
       height: 100%;
       min-width: 0;
-      min-height: 190px;
+      min-height: 0;
       padding: clamp(18px, 2.8vw, 26px);
       border: 1px solid var(--line);
       border-radius: var(--radius);
@@ -1524,14 +1524,12 @@
 
     .resource-card h2 {
       margin: 0 0 10px;
-      min-height: 2.5em;
       line-height: 1.2;
     }
 
     .resource-card p {
-      flex: 1;
-      margin: 0 0 16px;
-      min-height: 3.9em;
+      flex: 1 0 auto;
+      margin: 0 0 14px;
       color: var(--muted);
       line-height: 1.5;
     }
@@ -1541,6 +1539,8 @@
       align-items: center;
       gap: 8px;
       margin-top: auto;
+      padding-top: 4px;
+      flex-shrink: 0;
       color: var(--red-dark);
       font-size: var(--font-small);
       font-weight: 800;
