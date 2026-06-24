@@ -2303,12 +2303,12 @@
                 <input id="email" name="entry.1556369182" type="email" autocomplete="email" placeholder="nome@organizzazione.it" pattern="[^\s@]+@[^\s@]+\.[^\s@]+" required />
               </div>
               <div class="field">
-                <label for="organizzazione">Organizzazione</label>
-                <input id="organizzazione" name="entry.479301265" type="text" autocomplete="organization" placeholder="Nome organizzazione" />
+                <label for="organizzazione">Organizzazione <span class="req">*</span></label>
+                <input id="organizzazione" name="entry.479301265" type="text" autocomplete="organization" placeholder="Nome organizzazione" required />
               </div>
               <div class="field">
-                <label for="ruolo">Ruolo</label>
-                <input id="ruolo" name="entry.2104822976" type="text" autocomplete="organization-title" placeholder="Es. Fundraising manager" />
+                <label for="ruolo">Ruolo <span class="req">*</span></label>
+                <input id="ruolo" name="entry.2104822976" type="text" autocomplete="organization-title" placeholder="Es. Fundraising manager" required />
               </div>
               <div class="field full">
                 <label for="domanda">Domande</label>
@@ -2575,7 +2575,7 @@
       window.addEventListener("resize", requestDoodleUpdate);
     })();
 
-    var googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLScCsH0PqSwHkilZIjnj96qfnxSB4bW1ND3KAHJKrOPkpbMdug/formResponse";
+    var googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLScnZzUBggdsrw6YX-d3hVJux0kBLurAnPPM7akmrZ0J4PkAbg/formResponse";
     var forms = [
       {
         form: document.getElementById("contactForm"),
@@ -2585,6 +2585,8 @@
           nome: document.getElementById("nome"),
           cognome: document.getElementById("cognome"),
           email: document.getElementById("email"),
+          organizzazione: document.getElementById("organizzazione"),
+          ruolo: document.getElementById("ruolo"),
           nomeCompleto: document.getElementById("nomeCompleto")
         }
       }
@@ -2948,6 +2950,18 @@
       if (!email.value.trim() || !emailPattern.test(email.value.trim())) {
         email.focus();
         showStatus(config.status, "err", "Inserisci un indirizzo email valido.");
+        return false;
+      }
+
+      if (!config.fields.organizzazione.value.trim()) {
+        config.fields.organizzazione.focus();
+        showStatus(config.status, "err", "Inserisci la tua organizzazione.");
+        return false;
+      }
+
+      if (!config.fields.ruolo.value.trim()) {
+        config.fields.ruolo.focus();
+        showStatus(config.status, "err", "Inserisci il tuo ruolo.");
         return false;
       }
 
