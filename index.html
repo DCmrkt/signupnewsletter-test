@@ -1219,20 +1219,50 @@
       margin-bottom: 10px;
     }
 
+    .registration-form .check-row {
+      display: grid;
+      grid-template-columns: 16px minmax(0, 1fr);
+      column-gap: 10px;
+      align-items: center;
+    }
+
     .registration-form .check-row input {
+      flex: 0 0 16px;
       width: 16px;
       min-width: 16px;
       height: 16px;
       min-height: 16px;
-      margin-top: 1px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      outline: none;
+      box-shadow: none;
+      accent-color: var(--red);
+    }
+
+    .registration-form .check-row input:hover,
+    .registration-form .check-row input:focus,
+    .registration-form .check-row input:focus-visible {
+      outline: none;
+      box-shadow: none;
     }
 
     .registration-form .check-row label {
+      flex: 1;
+      min-width: 0;
+      margin: 0;
       font-size: var(--font-small);
       font-weight: 700;
       letter-spacing: 0;
       line-height: 1.35;
       text-transform: none;
+      cursor: pointer;
+    }
+
+    .registration-form .check-row label:hover,
+    .registration-form .check-row label:focus-visible {
+      font-weight: 700;
+      letter-spacing: 0;
     }
 
     .registration-form .status {
@@ -1420,9 +1450,17 @@
 
     .success-modal__calendar-actions {
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      align-items: stretch;
       gap: 10px;
       margin-top: 16px;
+    }
+
+    .success-modal__calendar-actions .success-modal__cta {
+      flex: 1 1 0;
+      min-width: 0;
+      white-space: nowrap;
+      padding: 0 12px;
     }
 
     .success-modal__cta {
