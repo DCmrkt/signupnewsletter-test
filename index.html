@@ -1418,11 +1418,17 @@
       line-height: 1.55;
     }
 
+    .success-modal__calendar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
     .success-modal__cta {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      margin-top: 16px;
       min-height: 40px;
       padding: 0 16px;
       border: 2px solid rgba(34, 197, 94, 0.34);
@@ -1439,6 +1445,18 @@
       border-color: #22c55e;
       background: #e8f8ed;
       color: #14532d;
+    }
+
+    .success-modal__cta--outlook {
+      border-color: rgba(0, 120, 212, 0.28);
+      background: #f0f7ff;
+      color: #0078d4;
+    }
+
+    .success-modal__cta--outlook:hover {
+      border-color: #0078d4;
+      background: #e5f2ff;
+      color: #005a9e;
     }
 
     .success-modal__close {
@@ -2371,7 +2389,10 @@
           <p class="small">Direct Channel Academy</p>
           <h2 id="successModalTitle">Registrazione completata</h2>
           <p>Ti invieremo il link di accesso prima del webinar.</p>
-          <a class="success-modal__cta" id="successModalCalendar" href="#" target="_blank" rel="noopener noreferrer">Aggiungilo al calendario</a>
+          <div class="success-modal__calendar-actions">
+            <a class="success-modal__cta" id="successModalGoogleCalendar" href="#" target="_blank" rel="noopener noreferrer">Aggiungi a Google Calendar</a>
+            <a class="success-modal__cta success-modal__cta--outlook" id="successModalOutlookCalendar" href="#" target="_blank" rel="noopener noreferrer">Aggiungi a Outlook</a>
+          </div>
         </div>
       </div>
     </div>
@@ -2602,7 +2623,8 @@
       var confettiCanvas = document.getElementById("confettiCanvas");
       var testButton = document.getElementById("testRegistrationSuccess");
       var registrationForm = document.getElementById("iscrizione");
-      var calendarButton = document.getElementById("successModalCalendar");
+      var googleCalendarButton = document.getElementById("successModalGoogleCalendar");
+      var outlookCalendarButton = document.getElementById("successModalOutlookCalendar");
       var confettiParticles = [];
       var confettiFrame = null;
       var autoCloseTimer = null;
@@ -2615,6 +2637,12 @@
         meetUrl: "https://meet.google.com/dcx-webinar-room",
         description: "Webinar gratuito Direct Channel Academy dedicato al progetto Modulo Volontari e alla raccolta delle esigenze della community."
       };
+
+      function formatOutlookDateTime(localValue) {
+        var match = localValue.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})?$/);
+        if (!match) return localValue;
+        return match[1] + "-" + match[2] + "-" + match[3] + "T" + match[4] + ":" + match[5] + ":00";
+      }
 
       function buildGoogleCalendarUrl() {
         var event = webinarEventConfig;
@@ -2630,9 +2658,23 @@
         return "https://calendar.google.com/calendar/render?" + params.toString();
       }
 
-      function updateCalendarLink() {
-        if (!calendarButton) return;
-        calendarButton.href = buildGoogleCalendarUrl();
+      function buildOutlookCalendarUrl() {
+        var event = webinarEventConfig;
+        var params = new URLSearchParams({
+          subject: event.title,
+          startdt: formatOutlookDateTime(event.startLocal),
+          enddt: formatOutlookDateTime(event.endLocal),
+          body: event.description + "\n\nPartecipa su Google Meet:\n" + event.meetUrl,
+          location: event.meetUrl,
+          allday: "false"
+        });
+
+        return "https://outlook.live.com/calendar/0/deeplink/compose?" + params.toString();
+      }
+
+      function updateCalendarLinks() {
+        if (googleCalendarButton) googleCalendarButton.href = buildGoogleCalendarUrl();
+        if (outlookCalendarButton) outlookCalendarButton.href = buildOutlookCalendarUrl();
       }
 
       function resizeConfettiCanvas() {
@@ -2703,7 +2745,7 @@
 
       function openRegistrationSuccess() {
         if (!successModal) return;
-        updateCalendarLink();
+        updateCalendarLinks();
         successModal.hidden = false;
         successModal.setAttribute("aria-hidden", "false");
         document.body.classList.add("modal-open");
@@ -2727,7 +2769,7 @@
       }
 
       window.showRegistrationSuccess = openRegistrationSuccess;
-      updateCalendarLink();
+      updateCalendarLinks();
 
       if (successModal) {
         successModal.querySelectorAll("[data-close-success]").forEach(function (element) {
