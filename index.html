@@ -1049,7 +1049,8 @@
       width: 100%;
       height: auto;
       max-width: none;
-      transform: translateY(calc(-25.5% - clamp(18px, 3.2vw, 32px)));
+      margin-top: -14.16%;
+      transform: translateY(calc(-1 * clamp(18px, 3.2vw, 32px)));
       filter: drop-shadow(0 22px 34px rgba(48, 31, 24, 0.2));
     }
 
@@ -1587,11 +1588,22 @@
         align-self: auto;
       }
 
+      .registration-media {
+        overflow: visible;
+      }
+
       .registration-visual {
         margin-bottom: 0;
+        border-radius: 0;
+        line-height: 0;
+      }
+
+      .registration-copy {
+        padding-top: clamp(14px, 3.5vw, 20px);
       }
 
       .registration-visual img {
+        margin-top: -14.16%;
         transform: none;
         filter: drop-shadow(0 18px 28px rgba(48, 31, 24, 0.16));
       }
