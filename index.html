@@ -28,6 +28,7 @@
       --shadow-soft: 0 14px 42px rgba(48, 31, 24, 0.08);
       --radius: 8px;
       --balloon-headroom: 13.25%;
+      --balloon-sky: #2165ab;
       --container-max: 1180px;
       --page-gutter: 20px;
       --scroll-thumb: #facc15;
@@ -984,7 +985,9 @@
       gap: clamp(16px, 2.8vw, 22px);
       width: 100%;
       min-width: 0;
-      align-self: stretch;
+      align-self: start;
+      grid-column: 1;
+      grid-row: 1;
     }
 
     .registration-media,
@@ -1003,6 +1006,9 @@
     .registration-form {
       overflow: hidden;
       scroll-margin-top: max(16px, env(safe-area-inset-top, 0px));
+      grid-column: 2;
+      grid-row: 1;
+      align-self: start;
     }
 
     .registration-media {
@@ -1046,7 +1052,7 @@
       flex: 0 0 auto;
       overflow: visible;
       border-radius: var(--radius) var(--radius) 0 0;
-      background: transparent;
+      background: var(--balloon-sky);
       line-height: 0;
     }
 
@@ -1056,7 +1062,7 @@
       height: auto;
       max-width: none;
       margin-top: calc(-1 * var(--balloon-headroom));
-      transform: translateY(calc(-1 * clamp(8px, 1.5vw, 16px)));
+      transform: none;
       filter: drop-shadow(0 22px 34px rgba(48, 31, 24, 0.2));
     }
 
@@ -1592,6 +1598,8 @@
       .registration-left {
         justify-content: flex-start;
         align-self: auto;
+        grid-column: auto;
+        grid-row: auto;
       }
 
       .registration-media {
@@ -1609,6 +1617,7 @@
       }
 
       .registration-visual img {
+        margin-top: calc(-1 * var(--balloon-headroom) - 1px);
         transform: none;
         filter: none;
       }
@@ -1731,6 +1740,9 @@
       .registration-form,
       .registration-media {
         position: static;
+        grid-column: auto;
+        grid-row: auto;
+        align-self: auto;
       }
     }
 
