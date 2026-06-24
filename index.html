@@ -969,6 +969,11 @@
         scale(var(--form-blob-small-s, 1));
     }
 
+    #desktopFormAnchor,
+    #mobileFormAnchor {
+      display: none !important;
+    }
+
     .registration-grid {
       position: relative;
       z-index: 1;
@@ -1048,7 +1053,7 @@
       position: relative;
       z-index: 2;
       width: 100%;
-      margin: 0 0 clamp(-68px, -12vw, -94px);
+      margin: 0;
       flex: 0 0 auto;
       overflow: visible;
       border-radius: var(--radius) var(--radius) 0 0;
@@ -1068,6 +1073,9 @@
 
     .registration-copy {
       flex: 1 1 auto;
+      position: relative;
+      z-index: 1;
+      background: var(--paper);
       padding: clamp(18px, 2.8vw, 26px);
     }
 
@@ -2226,6 +2234,7 @@
     </section>
 
     <section class="section registration" id="registrazione">
+      <div id="desktopFormAnchor" hidden></div>
       <div class="wrap registration-grid">
         <div class="registration-left">
           <div class="registration-media">
@@ -2257,7 +2266,6 @@
           </div>
         </div>
 
-        <div id="desktopFormAnchor" hidden></div>
         <div class="registration-form" id="iscrizione">
           <div class="form-title">
             <p class="kicker">Registrazione</p>
@@ -2358,16 +2366,22 @@
   <script>
     (function () {
       var mobileAnchor = document.getElementById("mobileFormAnchor");
-      var desktopAnchor = document.getElementById("desktopFormAnchor");
       var registrationForm = document.querySelector(".registration-form");
       var mobileQuery = window.matchMedia("(max-width: 680px)");
 
-      if (!mobileAnchor || !desktopAnchor || !registrationForm) return;
+      if (!mobileAnchor || !registrationForm) return;
 
       function placeRegistrationForm() {
-        var targetAnchor = mobileQuery.matches ? mobileAnchor : desktopAnchor;
-        if (registrationForm.previousElementSibling !== targetAnchor) {
-          targetAnchor.after(registrationForm);
+        if (mobileQuery.matches) {
+          if (registrationForm.previousElementSibling !== mobileAnchor) {
+            mobileAnchor.after(registrationForm);
+          }
+          return;
+        }
+
+        var leftColumn = document.querySelector(".registration-left");
+        if (leftColumn && registrationForm.previousElementSibling !== leftColumn) {
+          leftColumn.after(registrationForm);
         }
       }
 
