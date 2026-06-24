@@ -969,17 +969,16 @@
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: clamp(24px, 4.5vw, 48px);
-      align-items: stretch;
+      align-items: start;
     }
 
     .registration-left {
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
+      justify-content: flex-start;
       gap: clamp(16px, 2.8vw, 22px);
       width: 100%;
       min-width: 0;
-      align-self: stretch;
     }
 
     .registration-media,
@@ -1035,9 +1034,11 @@
 
     .registration-visual {
       position: relative;
+      z-index: 2;
       width: 100%;
-      margin: 0;
+      margin: 0 0 clamp(-68px, -12vw, -94px);
       flex: 0 0 auto;
+      overflow: visible;
       border-radius: var(--radius) var(--radius) 0 0;
       background: transparent;
     }
@@ -1047,9 +1048,8 @@
       width: 100%;
       height: auto;
       max-width: none;
-      object-fit: contain;
-      object-position: right bottom;
-      filter: drop-shadow(0 18px 28px rgba(48, 31, 24, 0.16));
+      transform: translateY(calc(-25.5% - clamp(18px, 3.2vw, 32px)));
+      filter: drop-shadow(0 22px 34px rgba(48, 31, 24, 0.2));
     }
 
     .registration-copy {
@@ -1580,6 +1580,15 @@
 
       .registration-left {
         justify-content: flex-start;
+      }
+
+      .registration-visual {
+        margin-bottom: 0;
+      }
+
+      .registration-visual img {
+        transform: none;
+        filter: drop-shadow(0 18px 28px rgba(48, 31, 24, 0.16));
       }
 
       .hero-grid {
