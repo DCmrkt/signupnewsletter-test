@@ -6,6 +6,8 @@
   <meta name="description" content="Registrati al webinar gratuito Direct Channel Academy dedicato al progetto Modulo Volontari: un incontro per conoscere il progetto e raccogliere le esigenze della community." />
   <link rel="icon" type="image/png" sizes="180x180" href="assets/apple-touch-icon.png" />
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+  <link rel="preload" as="image" href="assets/mascotte-direct-channel-cutout-crop.webp" media="(min-width: 681px)" />
+  <link rel="preload" as="image" href="assets/mascotte-direct-channel-mobile.webp" media="(max-width: 680px)" />
   <title>Progetto Modulo Volontari | Webinar Direct Channel Academy</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -2103,12 +2105,17 @@
         <figure class="hero-mascot" id="heroMascot" aria-label="Mascotte Direct Channel Academy">
           <img
             id="heroMascotImg"
-            src="assets/mascotte-direct-channel-cutout-crop.png"
-            data-default-src="assets/mascotte-direct-channel-cutout-crop.png"
-            data-default-mobile-src="assets/mascotte-direct-channel-mobile.png"
-            data-summer-src="assets/mascotte-summer-cutout.png"
-            data-autumn-src="assets/mascotte-autumn-cutout.png"
-            data-winter-src="assets/mascotte-winter-cutout.png"
+            src="assets/mascotte-direct-channel-cutout-crop.webp"
+            data-default-src="assets/mascotte-direct-channel-cutout-crop.webp"
+            data-default-mobile-src="assets/mascotte-direct-channel-mobile.webp"
+            data-summer-src="assets/mascotte-summer-cutout.webp"
+            data-autumn-src="assets/mascotte-autumn-cutout.webp"
+            data-winter-src="assets/mascotte-winter-cutout.webp"
+            width="900"
+            height="876"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
             alt="Mascotte Direct Channel con occhiali e maglia rossa"
           />
         </figure>
@@ -2177,7 +2184,7 @@
         <div class="registration-left">
           <div class="registration-media">
             <figure class="registration-visual">
-              <img src="assets/backgroundmongolfiere-card.png" alt="Mongolfiere colorate nel cielo per rappresentare un momento di incontro e confronto con la community" width="1600" height="900" loading="lazy" />
+              <img src="assets/backgroundmongolfiere-card.webp" alt="Mongolfiere colorate nel cielo per rappresentare un momento di incontro e confronto con la community" width="800" height="441" loading="lazy" decoding="async" />
             </figure>
             <div class="registration-copy">
               <p class="kicker">Webinar gratuito</p>
