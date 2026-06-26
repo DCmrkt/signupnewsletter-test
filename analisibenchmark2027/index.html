@@ -1378,10 +1378,10 @@
     .success-modal__panel {
       position: relative;
       z-index: 1;
-      width: min(520px, 100%);
+      width: min(680px, calc(100vw - 32px));
       border: 1px solid rgba(34, 197, 94, 0.22);
       border-radius: calc(var(--radius) + 4px);
-      padding: 32px 32px 32px 28px;
+      padding: clamp(28px, 4vw, 40px);
       background: #fff;
       box-shadow: var(--shadow);
       text-align: left;
@@ -1403,8 +1403,8 @@
     .success-modal__body {
       display: flex;
       align-items: flex-start;
-      gap: 20px;
-      padding-right: 30px;
+      gap: clamp(22px, 3vw, 32px);
+      padding-right: 38px;
     }
 
     .success-modal__icon {
@@ -1452,15 +1452,15 @@
       display: flex;
       flex-wrap: nowrap;
       align-items: stretch;
-      gap: 10px;
-      margin-top: 16px;
+      gap: 14px;
+      margin-top: 22px;
     }
 
     .success-modal__calendar-actions .success-modal__cta {
-      flex: 1 1 0;
-      min-width: 0;
+      flex: 1 1 220px;
+      min-width: 220px;
       white-space: nowrap;
-      padding: 0 12px;
+      padding: 0 18px;
     }
 
     .success-modal__cta {
@@ -2109,6 +2109,32 @@
 
       .resource-grid {
         grid-template-columns: 1fr;
+      }
+
+      .success-modal__panel {
+        width: min(440px, calc(100% - 24px));
+        padding: 24px;
+      }
+
+      .success-modal__body {
+        gap: 16px;
+        padding-right: 0;
+      }
+
+      .success-modal__icon {
+        width: 58px;
+        height: 58px;
+        font-size: 1.6rem;
+      }
+
+      .success-modal__calendar-actions {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .success-modal__calendar-actions .success-modal__cta {
+        flex-basis: 100%;
+        min-width: 0;
       }
     }
 
