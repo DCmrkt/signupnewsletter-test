@@ -925,9 +925,12 @@
 
     .focus-list li {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       color: var(--ink);
+      font-size: clamp(0.9rem, 1.15vw, 1rem);
       font-weight: 700;
+      line-height: 1.35;
+      white-space: nowrap;
     }
 
     .focus-list li::before {
@@ -1775,6 +1778,10 @@
 
       .focus-card {
         position: static;
+      }
+
+      .focus-list li {
+        white-space: normal;
       }
 
       .registration-form,
