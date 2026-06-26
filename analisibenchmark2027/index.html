@@ -6,7 +6,8 @@
   <meta name="description" content="Registrati al webinar gratuito Direct Channel Academy dedicato alla nuova edizione dell'Analisi Benchmark 2027: confronto tra cluster, KPI, metodologia e prossime tappe." />
   <link rel="icon" type="image/png" sizes="180x180" href="../assets/apple-touch-icon.png" />
   <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
-  <link rel="preload" as="image" href="../assets/benchmark-lights.png" />
+  <link rel="preload" as="image" href="../assets/benchmark-lights.png" media="(min-width: 681px)" />
+  <link rel="preload" as="image" href="../assets/benchmark-lights-mobile.png" media="(max-width: 680px)" />
   <title>Analisi Benchmark 2027 | Webinar Direct Channel Academy</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -2222,13 +2223,15 @@
           <img
             id="heroMascotImg"
             src="../assets/benchmark-lights.png"
+            srcset="../assets/benchmark-lights-mobile.png 480w, ../assets/benchmark-lights.png 826w"
+            sizes="(max-width: 680px) min(240px, 52vw), min(690px, 49vw)"
             data-default-src="../assets/benchmark-lights.png"
-            data-default-mobile-src="../assets/benchmark-lights.png"
+            data-default-mobile-src="../assets/benchmark-lights-mobile.png"
             data-summer-src="../assets/benchmark-lights.png"
             data-autumn-src="../assets/benchmark-lights.png"
             data-winter-src="../assets/benchmark-lights.png"
-            width="419"
-            height="500"
+            width="826"
+            height="1024"
             loading="eager"
             fetchpriority="high"
             decoding="async"
