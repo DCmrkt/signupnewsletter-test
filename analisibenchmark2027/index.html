@@ -2319,7 +2319,14 @@
             <p>Inserisci i tuoi dati per confermare la partecipazione gratuita.</p>
           </div>
 
-          <form id="contactForm" novalidate data-google-form="https://docs.google.com/forms/d/e/1FAIpQLSc4hLMEFoOvS11L0v9TtBUq7GPnWxmQmSSPLu6pGQS7-Bm3aA/viewform">
+          <form
+            id="contactForm"
+            action="https://docs.google.com/forms/d/e/1FAIpQLSc4hLMEFoOvS11L0v9TtBUq7GPnWxmQmSSPLu6pGQS7-Bm3aA/formResponse"
+            method="POST"
+            target="googleFormTarget"
+            novalidate
+            data-google-form="https://docs.google.com/forms/d/e/1FAIpQLSc4hLMEFoOvS11L0v9TtBUq7GPnWxmQmSSPLu6pGQS7-Bm3aA/viewform"
+          >
             <div class="form-grid">
               <div class="field">
                 <label for="nome">Nome <span class="req">*</span></label>
