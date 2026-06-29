@@ -924,8 +924,8 @@
     }
 
     .focus-list li {
-      display: flex;
-      gap: 12px;
+      position: relative;
+      padding-left: 24px;
       color: var(--ink);
       font-weight: 700;
       line-height: 1.4;
@@ -933,10 +933,11 @@
 
     .focus-list li::before {
       content: "";
+      position: absolute;
+      left: 0;
+      top: 0.3em;
       width: 12px;
       height: 12px;
-      flex: 0 0 12px;
-      margin-top: 7px;
       border-radius: 50%;
       background-color: var(--red);
       background-repeat: no-repeat;
