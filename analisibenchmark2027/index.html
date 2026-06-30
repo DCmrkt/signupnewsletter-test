@@ -269,9 +269,9 @@
     .hero-header {
       position: relative;
       z-index: 2;
-      display: flex;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
       align-items: center;
-      justify-content: space-between;
       gap: 24px;
       min-height: 44px;
     }
@@ -322,6 +322,7 @@
     .hero-header-brand {
       display: inline-flex;
       align-items: center;
+      justify-self: start;
       gap: clamp(12px, 2vw, 18px);
       min-height: 30px;
     }
@@ -334,6 +335,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      justify-self: center;
       gap: 8px;
       min-height: 30px;
       margin: 0;
@@ -1876,7 +1878,6 @@
 
       .hero-header {
         min-height: 38px;
-        justify-content: space-between;
       }
 
       .hero-header-brand {
