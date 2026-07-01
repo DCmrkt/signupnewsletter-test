@@ -364,35 +364,38 @@
 
     .benefit {
       min-height: 158px;
+      border: 1px solid rgba(255, 255, 255, 0.72);
       border-radius: var(--radius);
       padding: 20px;
-      color: #fff;
-      box-shadow: 0 18px 44px rgba(48, 31, 24, 0.13);
+      color: var(--ink);
+      box-shadow: 0 16px 36px rgba(48, 31, 24, 0.08);
     }
 
     .benefit:nth-child(1) {
-      background: var(--purple);
+      background: #eadcf8;
     }
 
     .benefit:nth-child(2) {
-      background: var(--blue);
+      background: #dcebf8;
     }
 
     .benefit:nth-child(3) {
-      background: var(--green);
-      color: #102314;
+      background: #e0f3e6;
     }
 
     .benefit:nth-child(4) {
-      background: var(--orange);
-      color: #241004;
+      background: #ffe8d7;
     }
 
-    .benefit-icon {
+    .benefit-kicker {
       display: block;
-      margin-bottom: 18px;
-      font-size: 1.72rem;
-      line-height: 1;
+      margin-bottom: 16px;
+      color: var(--red-dark);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      line-height: 1.2;
+      text-transform: uppercase;
     }
 
     .benefit p {
@@ -892,7 +895,7 @@
       <div class="wrap hero-grid">
         <div class="hero-copy">
           <div class="badge">Direct Channel Community</div>
-          <h1>Entra nel mondo <span class="highlight">Direct Channel</span>🚀</h1>
+          <h1>Entra nel mondo <span class="highlight">Direct Channel</span></h1>
           <p class="hero-lead">
             Aggiornamenti, webinar e contenuti utili per chi lavora nel mondo non profit.
           </p>
@@ -915,19 +918,19 @@
     <section class="benefits" aria-label="Vantaggi della newsletter">
       <div class="wrap benefit-grid">
         <article class="benefit">
-          <span class="benefit-icon">🚀</span>
+          <span class="benefit-kicker">Prodotti</span>
           <p>Aggiornamenti su Mentor e DirectSense.</p>
         </article>
         <article class="benefit">
-          <span class="benefit-icon">🎙️</span>
+          <span class="benefit-kicker">Webinar</span>
           <p>Webinar con casi reali e approfondimenti.</p>
         </article>
         <article class="benefit">
-          <span class="benefit-icon">📅</span>
+          <span class="benefit-kicker">Eventi</span>
           <p>Eventi della community durante l&rsquo;anno.</p>
         </article>
         <article class="benefit">
-          <span class="benefit-icon">📢</span>
+          <span class="benefit-kicker">Novit&agrave;</span>
           <p>Novit&agrave; e aggiornamenti dal mondo Direct Channel.</p>
         </article>
       </div>
@@ -1118,7 +1121,7 @@
           "main .btn",
           "main .badge",
           "main .live-status",
-          "main .benefit-icon",
+          "main .benefit-kicker",
           "footer p"
         ].join(","))).filter(function (element) {
           if (element.closest("#marketingEditorBar")) return false;
