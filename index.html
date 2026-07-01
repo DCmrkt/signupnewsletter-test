@@ -706,6 +706,140 @@
         grid-column: auto;
       }
     }
+
+    #marketingEditorBar {
+      position: sticky;
+      top: 0;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 40px;
+      padding: 6px max(12px, env(safe-area-inset-right, 0px)) 6px max(12px, env(safe-area-inset-left, 0px));
+      background: #050505;
+      color: #fff;
+      font-size: 0.75rem;
+      line-height: 1;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+    }
+
+    .marketing-editor-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    #marketingEditorStatus {
+      overflow: hidden;
+      max-width: 34vw;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-overflow: ellipsis;
+      text-transform: none;
+      white-space: nowrap;
+    }
+
+    .marketing-editor-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    .marketing-editor-button,
+    .marketing-editor-upload {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 5px;
+      padding: 6px 9px;
+      background: rgba(255, 255, 255, 0.09);
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.72rem;
+      font-weight: 800;
+      line-height: 1;
+      text-decoration: none;
+      transition: background 160ms ease, border-color 160ms ease;
+    }
+
+    .marketing-editor-button:hover,
+    .marketing-editor-upload:hover,
+    .marketing-editor-button:focus-visible,
+    .marketing-editor-upload:focus-visible {
+      border-color: rgba(255, 255, 255, 0.56);
+      background: rgba(255, 255, 255, 0.18);
+      outline: none;
+    }
+
+    .marketing-editor-button.primary {
+      border-color: var(--yellow);
+      background: var(--yellow);
+      color: var(--ink);
+    }
+
+    .marketing-editor-button.danger {
+      border-color: rgba(227, 6, 19, 0.82);
+    }
+
+    .marketing-editor-upload input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
+
+    [data-marketing-editable="true"] {
+      border-radius: 5px;
+      outline: 2px solid transparent;
+      outline-offset: 3px;
+      transition: background 160ms ease, outline-color 160ms ease;
+    }
+
+    [data-marketing-editable="true"]:hover,
+    [data-marketing-editable="true"]:focus {
+      background: rgba(250, 204, 21, 0.18);
+      outline-color: rgba(250, 204, 21, 0.78);
+    }
+
+    #heroMascotImg {
+      cursor: pointer;
+    }
+
+    @media (max-width: 680px) {
+      #marketingEditorBar {
+        position: relative;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .marketing-editor-title {
+        align-items: flex-start;
+        flex-direction: column;
+        white-space: normal;
+      }
+
+      #marketingEditorStatus {
+        max-width: 100%;
+        white-space: normal;
+      }
+
+      .marketing-editor-actions {
+        justify-content: flex-start;
+      }
+    }
   </style>
   <link rel="stylesheet" href="https://digital.mondadori.it/cookie-policy/custom_banner.css" media="all" />
   <script type="text/javascript">
@@ -730,6 +864,22 @@
   <script type="text/javascript" src="https://cdn.iubenda.com/cs/iubenda_cs.js" charset="UTF-8" async></script>
 </head>
 <body>
+  <div id="marketingEditorBar">
+    <div class="marketing-editor-title">
+      Editor marketing
+      <span id="marketingEditorStatus">Testi e immagine salvati su questo browser.</span>
+    </div>
+    <div class="marketing-editor-actions" aria-label="Strumenti editor">
+      <button class="marketing-editor-button" type="button" id="boldTextButton">B</button>
+      <label class="marketing-editor-upload">
+        Immagine
+        <input id="heroUploadInput" type="file" accept="image/*" />
+      </label>
+      <button class="marketing-editor-button primary" type="button" id="saveMarketingPageButton">Salva</button>
+      <button class="marketing-editor-button" type="button" id="downloadMarketingPageButton">Download</button>
+      <button class="marketing-editor-button danger" type="button" id="resetMarketingPageButton">Reset</button>
+    </div>
+  </div>
   <main>
     <section class="hero" aria-label="Newsletter Direct Channel">
       <header class="hero-header wrap" aria-label="Intestazione">
@@ -756,7 +906,7 @@
           <picture>
             <source srcset="assets/mascotte-direct-channel-mobile.webp" media="(max-width: 680px)" type="image/webp" />
             <source srcset="assets/mascotte-direct-channel-cutout-crop.webp" type="image/webp" />
-            <img src="assets/mascotte-direct-channel-cutout-crop.png" alt="Mascotte Direct Channel con occhiali e maglia rossa" width="720" height="900" decoding="async" />
+            <img id="heroMascotImg" src="assets/mascotte-direct-channel-cutout-crop.png" alt="Mascotte Direct Channel con occhiali e maglia rossa" width="720" height="900" decoding="async" />
           </picture>
         </figure>
       </div>
@@ -942,6 +1092,233 @@
       event.preventDefault();
       submitNewsletter();
     });
+  </script>
+  <script id="marketingEditorScript">
+    (function () {
+      var textStorageKey = "direct-channel-newsletter-page-text";
+      var heroStorageKey = "direct-channel-newsletter-page-hero";
+      var editorStatus = document.getElementById("marketingEditorStatus");
+      var heroInput = document.getElementById("heroUploadInput");
+      var heroImage = document.getElementById("heroMascotImg");
+      var saveTimer = null;
+      var savedRange = null;
+
+      function setEditorStatus(message) {
+        editorStatus.textContent = message;
+      }
+
+      function editableCandidates() {
+        return Array.prototype.slice.call(document.querySelectorAll([
+          "main h1",
+          "main h2",
+          "main h3",
+          "main p",
+          "main label",
+          "main .button",
+          "main .btn",
+          "main .badge",
+          "main .live-status",
+          "main .benefit-icon",
+          "footer p"
+        ].join(","))).filter(function (element) {
+          if (element.closest("#marketingEditorBar")) return false;
+          if (element.closest("svg")) return false;
+          if (element.querySelector("input, textarea, select, iframe, canvas, img, svg")) return false;
+          if (!element.textContent.trim()) return false;
+          return true;
+        });
+      }
+
+      var editables = editableCandidates();
+
+      function rememberSelection() {
+        var selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0) return;
+        var range = selection.getRangeAt(0);
+        var container = range.commonAncestorContainer;
+        var element = container.nodeType === 1 ? container : container.parentElement;
+        if (element && element.closest("[data-marketing-editable='true']")) {
+          savedRange = range.cloneRange();
+        }
+      }
+
+      function restoreSelection() {
+        if (!savedRange) return false;
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(savedRange);
+        return true;
+      }
+
+      function assignEditableKeys() {
+        editables.forEach(function (element, index) {
+          element.setAttribute("contenteditable", "true");
+          element.setAttribute("data-marketing-editable", "true");
+          element.setAttribute("data-marketing-key", "text-" + index);
+          element.addEventListener("input", scheduleSave);
+          element.addEventListener("mouseup", rememberSelection);
+          element.addEventListener("keyup", rememberSelection);
+          element.addEventListener("focus", rememberSelection);
+          element.addEventListener("paste", function (event) {
+            event.preventDefault();
+            var text = (event.clipboardData || window.clipboardData).getData("text/plain");
+            document.execCommand("insertText", false, text);
+          });
+        });
+      }
+
+      function collectTextEdits() {
+        return editables.reduce(function (payload, element) {
+          payload[element.getAttribute("data-marketing-key")] = element.innerHTML;
+          return payload;
+        }, {});
+      }
+
+      function saveTextEdits() {
+        localStorage.setItem(textStorageKey, JSON.stringify(collectTextEdits()));
+        setEditorStatus("Salvato su questo browser.");
+      }
+
+      function scheduleSave() {
+        window.clearTimeout(saveTimer);
+        setEditorStatus("Modifiche non salvate...");
+        saveTimer = window.setTimeout(saveTextEdits, 500);
+      }
+
+      function restoreTextEdits() {
+        var raw = localStorage.getItem(textStorageKey);
+        if (!raw) return;
+
+        try {
+          var payload = JSON.parse(raw);
+          editables.forEach(function (element) {
+            var key = element.getAttribute("data-marketing-key");
+            if (Object.prototype.hasOwnProperty.call(payload, key)) {
+              element.innerHTML = payload[key];
+            }
+          });
+        } catch (error) {
+          localStorage.removeItem(textStorageKey);
+        }
+      }
+
+      function removePictureSources(image) {
+        if (!image || !image.parentElement || image.parentElement.tagName.toLowerCase() !== "picture") return;
+        Array.prototype.forEach.call(image.parentElement.querySelectorAll("source"), function (source) {
+          source.remove();
+        });
+      }
+
+      function applyHeroSource(source) {
+        if (!source || !heroImage) return;
+        removePictureSources(heroImage);
+        heroImage.src = source;
+        heroImage.removeAttribute("srcset");
+        heroImage.setAttribute("data-editor-src", source);
+      }
+
+      function restoreHero() {
+        applyHeroSource(localStorage.getItem(heroStorageKey));
+      }
+
+      function handleHeroUpload(file) {
+        if (!file || !file.type || file.type.indexOf("image/") !== 0) {
+          setEditorStatus("Seleziona un file immagine.");
+          return;
+        }
+
+        var reader = new FileReader();
+        reader.onload = function () {
+          applyHeroSource(reader.result);
+          localStorage.setItem(heroStorageKey, reader.result);
+          setEditorStatus("Immagine aggiornata e salvata.");
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function makeSelectionBold() {
+        if (restoreSelection()) {
+          document.execCommand("bold", false, null);
+          rememberSelection();
+          saveTextEdits();
+        } else {
+          setEditorStatus("Seleziona un testo modificabile, poi premi B.");
+        }
+      }
+
+      function resetEdits() {
+        if (!window.confirm("Vuoi eliminare le modifiche salvate su questo browser?")) return;
+        localStorage.removeItem(textStorageKey);
+        localStorage.removeItem(heroStorageKey);
+        window.location.reload();
+      }
+
+      function prepareDownloadDocument() {
+        saveTextEdits();
+
+        var clone = document.documentElement.cloneNode(true);
+        var cloneBar = clone.querySelector("#marketingEditorBar");
+        var cloneScript = clone.querySelector("#marketingEditorScript");
+        var cloneHero = clone.querySelector("#heroMascotImg");
+        var clonedEditables = clone.querySelectorAll("[data-marketing-editable]");
+
+        if (cloneBar) cloneBar.remove();
+        if (cloneScript) cloneScript.remove();
+        if (cloneHero && heroImage) {
+          removePictureSources(cloneHero);
+          cloneHero.setAttribute("src", heroImage.getAttribute("src"));
+          cloneHero.removeAttribute("srcset");
+          cloneHero.removeAttribute("data-editor-src");
+        }
+
+        Array.prototype.forEach.call(clonedEditables, function (element) {
+          element.removeAttribute("contenteditable");
+          element.removeAttribute("data-marketing-editable");
+          element.removeAttribute("data-marketing-key");
+        });
+
+        return "<!DOCTYPE html>\n" + clone.outerHTML;
+      }
+
+      function downloadPage() {
+        var html = prepareDownloadDocument();
+        var blob = new Blob([html], { type: "text/html;charset=utf-8" });
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement("a");
+
+        link.href = url;
+        link.download = "newsletter-direct-channel-editata.html";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        setEditorStatus("File HTML scaricato.");
+      }
+
+      assignEditableKeys();
+      restoreTextEdits();
+      restoreHero();
+
+      document.addEventListener("selectionchange", rememberSelection);
+      document.getElementById("boldTextButton").addEventListener("mousedown", function (event) {
+        event.preventDefault();
+      });
+      document.getElementById("boldTextButton").addEventListener("click", makeSelectionBold);
+      document.getElementById("saveMarketingPageButton").addEventListener("click", saveTextEdits);
+      document.getElementById("downloadMarketingPageButton").addEventListener("click", downloadPage);
+      document.getElementById("resetMarketingPageButton").addEventListener("click", resetEdits);
+
+      heroInput.addEventListener("change", function (event) {
+        handleHeroUpload(event.target.files[0]);
+        heroInput.value = "";
+      });
+
+      if (heroImage) {
+        heroImage.addEventListener("click", function () {
+          heroInput.click();
+        });
+      }
+    })();
   </script>
 </body>
 </html>
