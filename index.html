@@ -954,11 +954,15 @@
           </div>
 
           <form id="contactForm" novalidate>
-            <input id="newsletter" name="entry.1618047083" type="hidden" value="S&igrave;, voglio iscrivermi alla newsletter" />
+            <input id="newsletter" name="entry.1618047083" type="hidden" value="S&igrave;, acconsento" />
             <div class="form-grid">
               <p class="field">
-                <label for="nomeCompleto">Nome e cognome <span class="req">*</span></label>
-                <input id="nomeCompleto" name="entry.2092238618" type="text" autocomplete="name" placeholder="Mario Rossi" />
+                <label for="nome">Nome <span class="req">*</span></label>
+                <input id="nome" name="entry.2092238618" type="text" autocomplete="given-name" placeholder="Mario" />
+              </p>
+              <p class="field">
+                <label for="cognome">Cognome <span class="req">*</span></label>
+                <input id="cognome" name="entry.1479261224" type="text" autocomplete="family-name" placeholder="Rossi" />
               </p>
               <p class="field">
                 <label for="email">Email <span class="req">*</span></label>
@@ -1021,7 +1025,7 @@
   <iframe name="googleFormTarget" id="googleFormTarget" style="display:none;" title="Form submit target"></iframe>
 
   <script>
-    var googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLScnZzUBggdsrw6YX-d3hVJux0kBLurAnPPM7akmrZ0J4PkAbg/formResponse";
+    var googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSc5WzEi9w225yHY8s1AFaOG8PpE8F9mY-vkYJYzneMDBwwDBw/formResponse";
     var form = document.getElementById("contactForm");
     var statusEl = document.getElementById("status");
     var submitBtn = document.getElementById("submitBtn");
@@ -1037,14 +1041,21 @@
     }
 
     function validate() {
-      var nome = document.getElementById("nomeCompleto");
+      var nome = document.getElementById("nome");
+      var cognome = document.getElementById("cognome");
       var email = document.getElementById("email");
       var organizzazione = document.getElementById("organizzazione");
       var ruolo = document.getElementById("ruolo");
 
       if (!nome.value.trim()) {
         nome.focus();
-        showStatus("err", "Inserisci il tuo nome e cognome.");
+        showStatus("err", "Inserisci il tuo nome.");
+        return false;
+      }
+
+      if (!cognome.value.trim()) {
+        cognome.focus();
+        showStatus("err", "Inserisci il tuo cognome.");
         return false;
       }
 
