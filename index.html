@@ -865,6 +865,22 @@
         padding: 24px 20px;
       }
 
+      .signup-grid {
+        grid-template-areas:
+          "copy"
+          "form";
+      }
+
+      .signup-mascot {
+        position: absolute;
+        z-index: 2;
+        top: -30px;
+        right: max(var(--page-gutter), env(safe-area-inset-right, 0px));
+        width: clamp(116px, 38vw, 145px);
+        margin: 0;
+        pointer-events: none;
+      }
+
       input {
         min-height: 52px;
       }
@@ -906,6 +922,17 @@
       .highlight {
         padding-inline: 0.14em;
         font-size: 0.92em;
+      }
+
+      .signup-copy .small-label {
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+      }
+
+      .signup-mascot {
+        top: -22px;
+        right: 10px;
+        width: clamp(104px, 34vw, 116px);
       }
     }
 
@@ -1151,7 +1178,7 @@
         <div class="community-copy">
           <p class="small-label">Community</p>
           <h2>Uno spazio sempre aperto per te</h2>
-          <p>Confrontati con la community del non profit, partecipa alla conversazione e condividi esperienze.<br>Lo spazio perfetto per costruire relazioni e crescere insieme.</p>
+          <p>Confrontati con la community: lo spazio perfetto per costruire relazioni e crescere insieme. Puoi condividere la tua esperienza, partecipare alle conversazioni e trovare nuove idee.</p>
           <a class="button" href="https://supporto.directchannel.it/portal/it/community/direct-channel-community" target="_blank" rel="noopener noreferrer">Entra nella community</a>
         </div>
 
