@@ -38,7 +38,6 @@
       --hero-blob-yellow-radius: 50%;
       --hero-blob-green-radius: 50%;
       --hero-ring-radius: 50%;
-      --signup-blob-radius: 50%;
     }
 
     * {
@@ -274,8 +273,11 @@
     .hero-copy {
       position: relative;
       min-width: 0;
-      max-width: 1040px;
-      padding-right: clamp(0px, 4vw, 48px);
+      width: 100%;
+      max-width: 1120px;
+      margin-inline: auto;
+      padding-inline: 0;
+      text-align: center;
     }
 
     .hero-copy::after {
@@ -297,7 +299,7 @@
       align-items: center;
       gap: 8px;
       min-height: 30px;
-      margin-bottom: 22px;
+      margin: 0 auto 22px;
       border: 1px solid rgba(227, 6, 19, 0.16);
       border-radius: 999px;
       padding: 0 12px;
@@ -319,19 +321,28 @@
       box-shadow: 0 0 0 4px rgba(227, 6, 19, 0.09);
     }
 
+    .hero-title-line,
     .highlight {
-      display: inline-block;
+      display: block;
+      width: max-content;
+      max-width: 100%;
+      margin-inline: auto;
+    }
+
+    .highlight {
       border-radius: 999px;
       padding: 0.02em 0.18em 0.12em;
       background: var(--red);
       color: #fff;
+      font-size: 1.18em;
+      font-size: calc(var(--font-h1) * 1.18);
       line-height: 0.95;
       white-space: nowrap;
     }
 
     .hero-lead {
       max-width: 720px;
-      margin-bottom: 32px;
+      margin: 0 auto 32px;
       color: var(--muted);
       font-size: clamp(1.08rem, 1.55vw, 1.25rem);
       line-height: 1.58;
@@ -340,6 +351,7 @@
     .hero-actions {
       display: flex;
       flex-wrap: wrap;
+      justify-content: center;
       gap: 12px;
       align-items: center;
     }
@@ -358,31 +370,70 @@
     }
 
     .benefit {
+      --benefit-tilt: 0deg;
+      position: relative;
       min-height: 158px;
+      overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.72);
       border-radius: var(--radius);
       padding: 20px;
       color: var(--ink);
       box-shadow: 0 16px 36px rgba(48, 31, 24, 0.08);
+      isolation: isolate;
+      transform: translateZ(0);
+      transition: transform 360ms cubic-bezier(0.2, 0.8, 0.2, 1), border-color 240ms ease, box-shadow 360ms ease;
+    }
+
+    .benefit::before,
+    .benefit::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .benefit::before {
+      z-index: 0;
+      inset: -1px;
+      background: radial-gradient(circle at 78% 18%, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0) 48%);
+      opacity: 0;
+      transform: scale(0.72);
+      transition: opacity 300ms ease, transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .benefit::after {
+      z-index: 0;
+      top: -38%;
+      left: -38%;
+      width: 28%;
+      height: 176%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.72), transparent);
+      transform: rotate(18deg);
+      transition: left 560ms cubic-bezier(0.2, 0.8, 0.2, 1);
     }
 
     .benefit:nth-child(1) {
+      --benefit-tilt: -0.8deg;
       background: #eadcf8;
     }
 
     .benefit:nth-child(2) {
+      --benefit-tilt: 0.65deg;
       background: #dcebf8;
     }
 
     .benefit:nth-child(3) {
+      --benefit-tilt: -0.55deg;
       background: #e0f3e6;
     }
 
     .benefit:nth-child(4) {
+      --benefit-tilt: 0.8deg;
       background: #ffe8d7;
     }
 
     .benefit-kicker {
+      position: relative;
+      z-index: 1;
       display: block;
       margin-bottom: 16px;
       color: var(--red-dark);
@@ -391,12 +442,41 @@
       letter-spacing: 0.1em;
       line-height: 1.2;
       text-transform: uppercase;
+      transition: transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
     }
 
     .benefit p {
+      position: relative;
+      z-index: 1;
       font-size: clamp(0.98rem, 1.35vw, 1.12rem);
       line-height: 1.35;
       font-weight: 800;
+      transition: transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .benefit:hover {
+        border-color: rgba(255, 255, 255, 0.96);
+        box-shadow: 0 26px 52px rgba(48, 31, 24, 0.16);
+        transform: translateY(-10px) rotate(var(--benefit-tilt)) scale(1.025);
+      }
+
+      .benefit:hover::before {
+        opacity: 1;
+        transform: scale(1.08);
+      }
+
+      .benefit:hover::after {
+        left: 118%;
+      }
+
+      .benefit:hover .benefit-kicker {
+        transform: translateY(-2px);
+      }
+
+      .benefit:hover p {
+        transform: translateY(-4px);
+      }
     }
 
     .signup {
@@ -404,20 +484,6 @@
       overflow: hidden;
       padding: clamp(80px, 9vw, 118px) 0;
       background: var(--beige);
-    }
-
-    .signup::before {
-      content: "";
-      position: absolute;
-      top: -100px;
-      right: -120px;
-      width: 360px;
-      aspect-ratio: 1;
-      border-radius: var(--signup-blob-radius);
-      background: rgba(168, 85, 247, 0.12);
-      transform: translate3d(var(--signup-blob-x, 0), var(--signup-blob-y, 0), 0) rotate(var(--signup-blob-rotate, 0deg)) scale(var(--signup-blob-scale, 1));
-      transform-origin: 50% 50%;
-      will-change: border-radius, transform;
     }
 
     .signup-grid {
@@ -460,9 +526,9 @@
       position: relative;
       grid-area: mascot;
       align-self: end;
-      justify-self: end;
-      width: clamp(188px, 55%, 248px);
-      margin: 24px 6% -42px 0;
+      justify-self: center;
+      width: clamp(190px, 52%, 232px);
+      margin: 28px auto 0;
       isolation: isolate;
     }
 
@@ -606,6 +672,15 @@
       color: #991b1b;
     }
 
+    .celebration-canvas {
+      position: fixed;
+      z-index: 20000;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
     .community {
       padding: clamp(82px, 9vw, 118px) 0;
       background: var(--cream);
@@ -713,8 +788,9 @@
       }
 
       .signup-mascot {
-        width: min(190px, 42vw);
-        margin: -8px 10px -36px 0;
+        justify-self: center;
+        width: min(180px, 46vw);
+        margin: 0 auto -20px;
       }
 
       .benefits {
@@ -761,6 +837,7 @@
 
       .highlight {
         max-width: none;
+        font-size: 1em;
         white-space: nowrap;
       }
 
@@ -811,9 +888,16 @@
 
       .hero::before,
       .hero::after,
-      .hero-copy::after,
-      .signup::before {
+      .hero-copy::after {
         will-change: auto;
+      }
+
+      .benefit,
+      .benefit::before,
+      .benefit::after,
+      .benefit-kicker,
+      .benefit p {
+        transition: none;
       }
     }
 
@@ -973,7 +1057,7 @@
       <div class="wrap hero-grid">
         <div class="hero-copy">
           <div class="badge">Direct Channel Community</div>
-          <h1>Entra nel mondo di&nbsp;<span class="highlight">Direct Channel</span></h1>
+          <h1><span class="hero-title-line">Entra nel mondo di</span><span class="highlight">Direct Channel</span></h1>
           <p class="hero-lead">Iscriviti alla nostra newsletter e lasciati ispirare da nuovi spunti, esperienze condivise e inviti alle iniziative della community.&nbsp;</p>
           <div class="hero-actions">
             <a class="button" href="#iscrizione">Non perderti le novità</a>
@@ -1091,6 +1175,7 @@
     </div>
   </footer>
 
+  <canvas class="celebration-canvas" id="celebrationCanvas" aria-hidden="true"></canvas>
   <iframe name="googleFormTarget" id="googleFormTarget" style="display:none;" title="Form submit target"></iframe>
 
   <script>
@@ -1099,6 +1184,10 @@
     var statusEl = document.getElementById("status");
     var submitBtn = document.getElementById("submitBtn");
     var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    var celebrationCanvas = document.getElementById("celebrationCanvas");
+    var celebrationContext = celebrationCanvas ? celebrationCanvas.getContext("2d") : null;
+    var celebrationFrame = null;
+    var celebrationReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     form.action = googleFormUrl;
     form.method = "POST";
@@ -1149,6 +1238,91 @@
       return true;
     }
 
+    function drawSparkle(context, size, color) {
+      context.fillStyle = color;
+      context.beginPath();
+      context.moveTo(0, -size);
+      context.lineTo(size * 0.24, -size * 0.24);
+      context.lineTo(size, 0);
+      context.lineTo(size * 0.24, size * 0.24);
+      context.lineTo(0, size);
+      context.lineTo(-size * 0.24, size * 0.24);
+      context.lineTo(-size, 0);
+      context.lineTo(-size * 0.24, -size * 0.24);
+      context.closePath();
+      context.fill();
+    }
+
+    function launchNewsletterCelebration() {
+      if (!celebrationCanvas || !celebrationContext || celebrationReducedMotion.matches) return;
+
+      if (celebrationFrame) {
+        window.cancelAnimationFrame(celebrationFrame);
+      }
+
+      var pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      var viewportWidth = window.innerWidth;
+      var viewportHeight = window.innerHeight;
+      var buttonRect = submitBtn.getBoundingClientRect();
+      var originX = buttonRect.left + (buttonRect.width / 2);
+      var originY = buttonRect.top + (buttonRect.height / 2);
+      var colors = ["#e30613", "#a855f7", "#facc15", "#22c55e", "#ff8a3d", "#2165ab", "#ffffff"];
+      var particleCount = viewportWidth < 680 ? 64 : 92;
+      var particles = [];
+      var startTime = window.performance.now();
+
+      celebrationCanvas.width = Math.round(viewportWidth * pixelRatio);
+      celebrationCanvas.height = Math.round(viewportHeight * pixelRatio);
+      celebrationContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+
+      for (var i = 0; i < particleCount; i += 1) {
+        particles.push({
+          color: colors[i % colors.length],
+          kind: i % 5 === 0 ? "sparkle" : "confetti",
+          rotation: Math.random() * Math.PI,
+          rotationSpeed: (Math.random() - 0.5) * 12,
+          size: 5 + (Math.random() * 8),
+          velocityX: (Math.random() - 0.5) * (viewportWidth < 680 ? 330 : 560),
+          velocityY: -290 - (Math.random() * 390)
+        });
+      }
+
+      function renderCelebration(timestamp) {
+        var elapsed = (timestamp - startTime) / 1000;
+        var opacity = Math.max(0, 1 - Math.max(0, elapsed - 1.25) / 0.9);
+
+        celebrationContext.clearRect(0, 0, viewportWidth, viewportHeight);
+
+        particles.forEach(function (particle) {
+          var x = originX + (particle.velocityX * elapsed);
+          var y = originY + (particle.velocityY * elapsed) + (390 * elapsed * elapsed);
+
+          celebrationContext.save();
+          celebrationContext.globalAlpha = opacity;
+          celebrationContext.translate(x, y);
+          celebrationContext.rotate(particle.rotation + (particle.rotationSpeed * elapsed));
+
+          if (particle.kind === "sparkle") {
+            drawSparkle(celebrationContext, particle.size, particle.color);
+          } else {
+            celebrationContext.fillStyle = particle.color;
+            celebrationContext.fillRect(-particle.size * 0.5, -particle.size * 0.28, particle.size, particle.size * 0.56);
+          }
+
+          celebrationContext.restore();
+        });
+
+        if (elapsed < 2.15) {
+          celebrationFrame = window.requestAnimationFrame(renderCelebration);
+        } else {
+          celebrationContext.clearRect(0, 0, viewportWidth, viewportHeight);
+          celebrationFrame = null;
+        }
+      }
+
+      celebrationFrame = window.requestAnimationFrame(renderCelebration);
+    }
+
     function submitNewsletter() {
       statusEl.className = "status";
 
@@ -1163,6 +1337,7 @@
         submitBtn.disabled = false;
         submitBtn.textContent = "Iscriviti";
         showStatus("ok", "Iscrizione ricevuta. Ti terremo aggiornato sulle prossime novità Direct Channel.");
+        launchNewsletterCelebration();
       }, 1000);
     }
 
@@ -1180,7 +1355,6 @@
     (function () {
       var root = document.documentElement;
       var hero = document.querySelector(".hero");
-      var signup = document.querySelector(".signup");
       var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
       var framePending = false;
 
@@ -1206,7 +1380,6 @@
       }
 
       function updateBlobMorph() {
-        var viewportHeight = window.innerHeight || 1;
         var heroRect = hero.getBoundingClientRect();
         var heroProgress = clamp(-heroRect.top / Math.max(hero.offsetHeight * 0.76, 1));
         var heroMorph = Math.sin(heroProgress * Math.PI * 0.5);
@@ -1224,18 +1397,6 @@
         root.style.setProperty("--hero-blob-green-scale", 1 + (0.1 * heroMorph));
         root.style.setProperty("--hero-ring-rotate", (22 * heroMorph) + "deg");
         root.style.setProperty("--hero-ring-scale", 1 + (0.07 * heroMorph));
-
-        if (signup) {
-          var signupRect = signup.getBoundingClientRect();
-          var signupProgress = clamp((viewportHeight * 0.88 - signupRect.top) / Math.max(viewportHeight * 0.7, 1));
-          var signupMorph = Math.sin(signupProgress * Math.PI * 0.5);
-
-          root.style.setProperty("--signup-blob-radius", organicRadius(signupMorph, false));
-          root.style.setProperty("--signup-blob-x", (-22 * signupMorph) + "px");
-          root.style.setProperty("--signup-blob-y", (18 * signupMorph) + "px");
-          root.style.setProperty("--signup-blob-rotate", (-18 * signupMorph) + "deg");
-          root.style.setProperty("--signup-blob-scale", 1 + (0.08 * signupMorph));
-        }
 
         framePending = false;
       }
