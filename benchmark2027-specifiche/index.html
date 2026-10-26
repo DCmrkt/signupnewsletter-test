@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Benchmark 2027: raccolta delle specifiche della tua organizzazione. Anteprima del questionario Direct Channel.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'none'; form-action 'none'; frame-src https://script.google.com https://*.googleusercontent.com; object-src 'none'; base-uri 'none'">
+  <title>Benchmark 2027 · Raccolta specifiche | Direct Channel</title>
+  <link rel="icon" href="assets/favicon.ico">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="benchmark-style.css">
+  <link rel="preload" as="image" href="assets/benchmark-lights.png" media="(min-width: 681px)">
+  <link rel="preload" as="image" href="assets/benchmark-lights-mobile.png" media="(max-width: 680px)">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#questionnaire">Vai al questionario</a>
+  <div class="preview-bar">
+    <div class="container preview-content">
+      <p><span class="preview-dot" aria-hidden="true"></span><strong id="mode-label">Benchmark 2027</strong><span class="preview-explainer" id="service-notice"> · Servizio di invio in attivazione.</span></p>
+      <button id="demo-button" type="button" hidden>Prova il finale con dati di esempio <span aria-hidden="true">↗</span></button>
+    </div>
+  </div>
+  <main id="top">
+    <section class="benchmark-hero" aria-labelledby="hero-title">
+      <header class="container benchmark-header">
+        <a class="benchmark-logo" href="#top" aria-label="Direct Channel, inizio pagina"><img src="assets/direct-channel-logo.png" alt="Direct Channel · Gruppo Mondadori" width="800" height="376"></a>
+        <span class="benchmark-status">Raccolta specifiche</span>
+      </header>
+      <svg class="benchmark-flower benchmark-flower-purple" viewBox="-36 -36 72 72" aria-hidden="true"><g stroke="#a855f7" stroke-width="9" stroke-linecap="round" fill="none"><path d="M0-31V31M-31 0H31M-22-22L22 22M22-22L-22 22M-12-29L12 29M12-29L-12 29"/></g></svg>
+      <svg class="benchmark-flower benchmark-flower-yellow" viewBox="-38 -38 76 76" aria-hidden="true"><g stroke="#facc15" stroke-width="10" stroke-linecap="round" fill="none"><path d="M0-34V34M-34 0H34M-24-24L24 24M24-24L-24 24M-14-32L14 32M14-32L-14 32"/></g></svg>
+      <div class="container benchmark-grid">
+        <div class="benchmark-intro"><h1 id="hero-title" class="benchmark-heading">Analisi<br>benchmark<br><span class="benchmark-year">2027</span></h1></div>
+        <div class="benchmark-copy">
+          <p>Aiutaci a leggere al meglio <strong>la tua organizzazione.</strong></p>
+          <ul class="benchmark-meta" aria-label="Il questionario"><li>Raccolta specifiche</li><li>6 sezioni guidate</li></ul>
+          <div class="benchmark-actions"><a class="button button-primary" href="#questionnaire">Compila il questionario <span aria-hidden="true">↓</span></a></div>
+          <p>Condividi le informazioni e i criteri per l’Analisi Benchmark 2027. Alla fine potrai personalizzare il tuo messaggio per il team.</p>
+        </div>
+        <figure class="benchmark-lights"><picture><source media="(max-width: 680px)" srcset="assets/benchmark-lights-mobile.png"><img src="assets/benchmark-lights.png" width="826" height="1024" fetchpriority="high" decoding="async" alt="Nove lampadine colorate sospese, dalla pagina Analisi Benchmark 2027"></picture></figure>
+      </div>
+    </section>
+    <section id="questionnaire" class="questionnaire-shell" aria-label="Questionario Benchmark 2027">
+      <div class="container workspace">
+        <aside class="journey">
+          <p class="eyebrow">IL TUO PERCORSO</p>
+          <ol id="step-list" class="step-list"></ol>
+          <div class="journey-note"><span aria-hidden="true">↗</span><p>Alla fine potrai personalizzare il messaggio da inviare al team.</p></div>
+        </aside>
+        <div class="form-column">
+          <div id="form-view">
+            <div class="progress-row"><span id="step-label">SEZIONE 01 / 06</span><span id="progress-description">Iniziamo dai tuoi riferimenti</span></div>
+            <progress id="progress" max="6" value="1" aria-label="Sezione corrente">1 di 6</progress>
+            <form id="survey" novalidate>
+              <div class="form-card">
+                <header class="section-header"><p class="section-tag" id="section-tag">COMINCIAMO DA QUI</p><h2 id="section-title" tabindex="-1">I tuoi riferimenti</h2><p id="section-description">Presentati: ci aiuterà a collegare le specifiche alla tua organizzazione.</p></header>
+                <p class="required-note" id="required-note">I campi con <span aria-hidden="true">*</span> sono obbligatori.</p>
+                <div id="sections"></div>
+                <div id="form-error" role="alert" class="form-error" hidden></div>
+                <div class="form-actions"><button type="button" class="button button-secondary" id="back" hidden><span aria-hidden="true">←</span> Indietro</button><span class="step-caption" id="step-caption">Un passo alla volta.</span><button type="submit" class="button button-primary" id="next">Continua <span aria-hidden="true">→</span></button></div>
+              </div>
+            </form>
+            <p class="local-note" id="collection-note">Il servizio di invio è in attivazione. Al momento le risposte non vengono trasmesse.</p>
+          </div>
+          <section id="success-view" class="success-card" hidden aria-labelledby="success-title">
+            <span class="success-symbol" aria-hidden="true">✓</span><p class="eyebrow">ANTEPRIMA COMPLETATA</p><h2 id="success-title" tabindex="-1">Il tuo messaggio<br>è pronto.</h2><p>Hai provato il percorso fino alla conferma finale.<br>In questa anteprima nessuna risposta o email è stata inviata.</p>
+            <dl class="delivery-summary"><div><dt>Destinatario previsto</dt><dd>mirco.devito@mondadori.it</dd></div><div><dt>Oggetto</dt><dd id="success-subject"></dd></div></dl><pre id="success-message"></pre>
+            <button id="edit-message" class="button button-primary" type="button">Torna al messaggio <span aria-hidden="true">←</span></button>
+          </section>
+          <p id="announcement" class="sr-only" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="container site-footer"><span>Direct Channel · Gruppo Mondadori</span><span>Benchmark 2027 · Raccolta specifiche</span><details><summary>Informazioni sui dati</summary><p>Direct Channel utilizza i riferimenti e le risposte per raccogliere le specifiche dell’Analisi Benchmark 2027. Confermando l’invio, le risposte vengono registrate nel modulo Google e il messaggio personalizzato è inviato esclusivamente a mirco.devito@mondadori.it tramite un servizio Google. La copia delle risposte prevista dalle impostazioni di Google Forms è una comunicazione separata. Non inserire dati di singoli donatori o credenziali nei campi liberi. Questa pagina non usa analytics e non salva le risposte nel browser. <a href="https://dcmentor.github.io/webinar/privacy/" target="_blank" rel="noopener noreferrer">Informativa Direct Channel</a>.</p></details></footer>
+  <noscript><p class="container">Per provare questa anteprima è necessario attivare JavaScript.</p></noscript>
+</body>
+</html>
