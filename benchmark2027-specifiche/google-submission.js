@@ -1,5 +1,28 @@
 import {sections} from './questions.js';
 
+let deliverySequence=0;
+
+export function postGoogleSubmission(submission,{showConfirmation=false}={}){
+  const post=document.createElement('form');
+  post.method='POST';post.action=submission.action;post.hidden=true;post.acceptCharset='UTF-8';
+  let frame;
+  if(showConfirmation){post.target='_blank';post.rel='noopener';}
+  else{
+    frame=document.createElement('iframe');
+    frame.name='benchmark-google-delivery-'+(++deliverySequence);
+    frame.hidden=true;frame.title='Invio del questionario';frame.setAttribute('aria-hidden','true');
+    post.target=frame.name;
+    // noopener would turn this named target into a new tab. Never infer success from iframe load.
+    document.body.append(frame);
+  }
+  for(const [name,value] of submission.fields){
+    const field=document.createElement('input');field.type='hidden';field.name=name;field.value=value;post.append(field);
+  }
+  try{document.body.append(post);post.submit();}
+  catch(error){frame?.remove();throw error;}
+  finally{post.remove();}
+}
+
 export function buildGoogleSubmission(answers,other={}){
   const fields=[['fvv','1'],['pageHistory',sections.map((_,i)=>i).join(',')]];
   for(const q of sections.flatMap(section=>section.questions)){

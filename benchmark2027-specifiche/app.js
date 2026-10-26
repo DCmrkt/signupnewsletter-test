@@ -1,7 +1,7 @@
 import './network.js';
 import { sections } from './questions.js';
 import { RECIPIENT, createMailto } from './mailto.js';
-import { buildGoogleSubmission } from './google-submission.js';
+import { buildGoogleSubmission, postGoogleSubmission } from './google-submission.js?v=20261026-background';
 
 const PREVIEW = new URLSearchParams(location.search).get('preview') === '1';
 const MAX_MESSAGE = 4000;
@@ -12,7 +12,7 @@ const descriptions = [
   'Condividi i criteri che ci permetteranno di interpretare correttamente le informazioni nel database.',
   'Per alcuni KPI, come l’attrition, forniremo un dettaglio per macro-canale. Aiutaci a classificare le campagne: quelle non riconducibili ai canali indicati saranno classificate come ALTRO.',
   'Segnala eventuali eccezioni o informazioni che vuoi condividere con il team.',
-  'Registra le risposte, verifica la conferma di Google e personalizza il messaggio per Stefania. La mail si apre nella tua app di posta.'
+  'Registra le risposte e personalizza il messaggio per Stefania. Dopo aver ricevuto la copia del questionario, puoi aprire la mail nella tua app di posta.'
 ];
 const headings = ['I tuoi riferimenti', 'La tua organizzazione', 'I criteri nel database', 'Le campagne, per canale', 'Prima di concludere', 'Una mail, con le tue parole.'];
 const $ = id => document.getElementById(id);
@@ -25,6 +25,7 @@ let bodyEdited = false;
 let subjectEdited = false;
 let completed = false;
 let saveAttempted = false;
+let previouslySubmitted = false;
 if (PREVIEW) {
   document.getElementById('preview-banner').hidden = false;
   document.getElementById('mode-label').textContent = 'Anteprima interattiva';
@@ -164,11 +165,11 @@ for (const [key, title] of [['recap-name', 'Il tuo nome'], ['recap-org', 'Organi
 final.append(recap);
 const saveBox = element('div', 'save-questionnaire');
 saveBox.append(element('h3', '', '1. Registra le risposte'));
-saveBox.append(element('p', '', 'Si apre la conferma di Google in una nuova scheda. Controlla che le risposte risultino registrate, poi torna qui per scrivere a Stefania.'));
-const saveButton = element('button', 'button button-secondary', PREVIEW ? 'Simula il salvataggio' : 'Registra il questionario ↗');
+saveBox.append(element('p', '', 'Registra il questionario senza lasciare questa pagina. La copia delle risposte arriverà all’indirizzo email che hai indicato.'));
+const saveButton = element('button', 'button button-secondary', PREVIEW ? 'Simula il salvataggio' : 'Registra il questionario');
 saveButton.type = 'button'; saveButton.id = 'save-questionnaire';
 const saveStatus = element('p', 'save-status'); saveStatus.id = 'save-status'; saveStatus.setAttribute('role', 'status');
-const retryButton = element('button', 'text-button', 'Non ho ricevuto la conferma: riprova');
+const retryButton = element('button', 'text-button', 'Non ricevo la copia: verifica con Google ↗');
 retryButton.type = 'button'; retryButton.id = 'retry-questionnaire'; retryButton.hidden = true;
 saveBox.append(saveButton, saveStatus, retryButton); final.append(saveBox);
 const composer = element('div', 'mail-composer');
@@ -199,8 +200,8 @@ mailContent.append(subjectBox, bodyBox, footer);
 composer.append(mailHeading, routing, mailContent);
 final.append(composer);
 const confirmation = element('label', 'confirmation');
-const confirmed = element('input'); confirmed.type = 'checkbox'; confirmed.id = 'confirm-send'; confirmed.name = 'confirm-send'; confirmed.required = true;
-const confirmText = element('span'); confirmText.append(document.createTextNode(PREVIEW ? 'Ho controllato il messaggio di esempio per ' : 'Ho verificato la conferma di Google e ho riletto il messaggio per '), element('strong', '', RECIPIENT), document.createTextNode('.'));
+const confirmed = element('input'); confirmed.type = 'checkbox'; confirmed.id = 'confirm-send'; confirmed.name = 'confirm-send'; confirmed.required = true; confirmed.disabled = true;
+const confirmText = element('span'); confirmText.append(document.createTextNode(PREVIEW ? 'Ho controllato il messaggio di esempio per ' : 'Ho ricevuto la copia delle risposte e ho riletto il messaggio per '), element('strong', '', RECIPIENT), document.createTextNode('.'));
 confirmation.append(confirmed, confirmText); final.append(confirmation);
 const copyRow = element('div', 'mail-copy-row');
 const copy = element('button', 'text-button', 'Copia messaggio'); copy.id = 'copy-message'; copy.type = 'button';
@@ -262,7 +263,7 @@ function validatePanel(index) {
   if (index === 5) {
     body.setCustomValidity(!body.value.trim() ? 'Scrivi il messaggio da inviare.' : body.value.length > MAX_MESSAGE ? 'Il messaggio può contenere al massimo 4.000 caratteri.' : '');
     subject.setCustomValidity(subject.value.trim() ? '' : 'Scrivi un oggetto per la mail.');
-    confirmed.setCustomValidity(confirmed.checked ? '' : 'Verifica la conferma di Google e controlla il messaggio prima di aprire la mail.');
+    confirmed.setCustomValidity(confirmed.checked ? '' : 'Conferma di aver ricevuto la copia delle risposte e controllato il messaggio prima di aprire la mail.');
   }
   const invalid = [...panels[index].querySelectorAll('input, textarea')].find(input => !input.disabled && !input.checkValidity());
   if (invalid) {
@@ -291,7 +292,7 @@ reset.addEventListener('click', () => {
 });
 $('back').addEventListener('click', () => showSection(Math.max(0, current - 1)));
 function invalidateSubmission() {
-  saveAttempted = false; saveButton.disabled = false; retryButton.hidden = true; saveStatus.textContent = ''; confirmed.checked = false;
+  saveAttempted = false; saveButton.disabled = false; retryButton.hidden = true; saveStatus.textContent = ''; confirmed.checked = false; confirmed.disabled = true;
 }
 function validateQuestionnaire() {
   for (let index = 0; index < 5; index++) {
@@ -307,28 +308,27 @@ function questionnaireAnswers() {
   }
   return {values, other};
 }
-saveButton.addEventListener('click', () => {
+function saveQuestionnaire({showConfirmation=false,duplicateConfirmed=false}={}) {
   if (saveAttempted) return;
   clearError();
   if (!validateQuestionnaire()) return;
+  if (!PREVIEW && previouslySubmitted && !duplicateConfirmed && !window.confirm('Hai già trasmesso questo questionario. Un altro invio può creare una seconda risposta. Per correggere quella esistente, usa il link nella copia ricevuta via email. Vuoi comunque inviare nuovamente le risposte?')) return;
   if (!PREVIEW) {
     try {
+      if (navigator.onLine === false) throw new Error('Sei offline. Riconnettiti e riprova: le risposte sono ancora in questa pagina.');
       const {values, other} = questionnaireAnswers();
       const submission = buildGoogleSubmission(values, other);
-      const post = document.createElement('form'); post.method = 'POST'; post.action = submission.action;
-      post.target = '_blank'; post.rel = 'noopener'; post.hidden = true; post.acceptCharset = 'UTF-8';
-      for (const [name, value] of submission.fields) {
-        const field = document.createElement('input'); field.type = 'hidden'; field.name = name; field.value = value; post.append(field);
-      }
-      document.body.append(post); post.submit(); post.remove();
+      postGoogleSubmission(submission,{showConfirmation});
+      previouslySubmitted = true;
     } catch (error) { saveStatus.textContent = error.message; return; }
   }
-  saveAttempted = true; saveButton.disabled = true; retryButton.hidden = false; confirmed.checked = false;
-  saveStatus.textContent = PREVIEW ? 'Simulazione: nessuna risposta è stata trasmessa. Puoi provare il box del messaggio.' : 'Controlla la conferma nella scheda Google. Poi torna qui, personalizza il messaggio e spunta la casella sotto.';
-});
+  saveAttempted = true; saveButton.disabled = true; retryButton.hidden = false; confirmed.checked = false; confirmed.disabled = false;
+  saveStatus.textContent = PREVIEW ? 'Simulazione: nessuna risposta è stata trasmessa. Puoi provare il box del messaggio.' : showConfirmation ? 'Completa l’eventuale verifica nella scheda Google, poi controlla la copia delle risposte nella tua email.' : `Richiesta di registrazione inviata. Attendi la copia delle risposte a ${read('email')} e controlla anche lo spam. Quando la ricevi, puoi confermare qui sotto e scrivere a Stefania.`;
+}
+saveButton.addEventListener('click', () => saveQuestionnaire());
 retryButton.addEventListener('click', () => {
-  if (!PREVIEW && !window.confirm('Ripeti solo se Google non ha registrato le risposte: un nuovo invio può creare una seconda risposta. Hai verificato che il tentativo precedente non è riuscito?')) return;
-  invalidateSubmission(); saveButton.click();
+  if (!PREVIEW && !window.confirm('La copia può impiegare qualche minuto: controlla anche lo spam. Questa verifica ripete l’invio in una scheda Google e potrebbe creare una seconda risposta. Continua solo se non hai ricevuto la copia e devi verificare un problema. Vuoi continuare?')) return;
+  invalidateSubmission(); saveQuestionnaire({showConfirmation:true,duplicateConfirmed:true});
 });
 copy.addEventListener('click', async () => {
   try { await navigator.clipboard.writeText(body.value); templateStatus.textContent = 'Messaggio copiato. Puoi incollarlo in una mail a ' + RECIPIENT + '.'; }
@@ -337,7 +337,7 @@ copy.addEventListener('click', async () => {
 form.addEventListener('submit', event => {
   event.preventDefault();
   if (current === 5 && !PREVIEW && !saveAttempted) {
-    $('form-error').textContent = 'Prima registra il questionario con il pulsante sopra e verifica la conferma di Google.';
+    $('form-error').textContent = 'Prima registra il questionario con il pulsante sopra e controlla la copia delle risposte nella tua email.';
     $('form-error').hidden = false; saveButton.focus(); return;
   }
   if (completed || !validatePanel(current)) return;
