@@ -1,0 +1,21 @@
+.native-workspace{grid-template-columns:210px minmax(0,1fr)}
+.native-steps{list-style:none;margin:0;padding:0;display:grid;gap:22px}
+.native-steps a{display:flex;align-items:center;gap:12px;text-decoration:none;font-size:13px;line-height:1.5;font-weight:700}
+.native-steps .step-number{color:white;background:#9333ea;border-color:#9333ea}
+.native-form-card{padding:30px 20px 20px}
+.native-form-card .section-header{padding-inline:12px}
+.google-form{display:block;width:100%;height:1300px;margin:20px 0 0;border:0;background:white;border-radius:8px}
+.native-help{font-size:12px;color:#655d55;line-height:1.8;padding-inline:12px}
+.native-help a,.mail-help a{text-underline-offset:3px}
+.native-next{justify-content:flex-end}
+.message-card{margin-top:28px;scroll-margin-top:24px}
+.message-card .mail-composer{margin-top:24px}
+.message-card .mail-routing{grid-template-columns:1fr}
+.message-card .mail-routing dd{font-size:13px!important}
+.mail-help{font-size:12px;line-height:1.8;color:#655d55;margin:20px 0 0}
+.message-card .form-actions{flex-wrap:wrap;justify-content:flex-end}
+.message-card .form-actions .button{gap:12px}
+.button[aria-disabled=true]{opacity:.55;cursor:default}
+.mailto-status{font-size:12px;line-height:1.8;color:#655d55;min-height:22px;margin:14px 0 0}
+@media(max-width:900px){.native-workspace{grid-template-columns:minmax(0,1fr)}.native-workspace .journey{position:static}.native-workspace .journey>.eyebrow{display:none}.native-steps{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:22px}.native-steps a{font-size:12px}.native-workspace .journey-note{display:none}}
+@media(max-width:680px){.native-form-card{padding:24px 0 16px}.native-form-card .section-header,.native-help{padding-inline:20px}.google-form{height:1450px}.native-next{margin-inline:16px}.native-steps{gap:12px}.native-steps a{font-size:11px;gap:8px}.native-steps .step-number{height:26px;width:26px}.message-card .form-actions{justify-content:stretch}.message-card .form-actions .button{width:100%}.message-card .mail-routing dd{font-size:12px!important}}
