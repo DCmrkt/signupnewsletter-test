@@ -14,7 +14,6 @@ const descriptions = [
   'Segnala eventuali eccezioni o informazioni che vuoi condividere con il team.',
   'Registra le risposte, verifica la conferma di Google e personalizza il messaggio per Stefania. La mail si apre nella tua app di posta.'
 ];
-const tags = ['COMINCIAMO DA QUI', 'UNO SGUARDO D’INSIEME', 'DAI DATI ALLE INFORMAZIONI', 'LA LETTURA DEI CANALI', 'I DETTAGLI FANNO LA DIFFERENZA', 'L’ULTIMO PASSAGGIO'];
 const headings = ['I tuoi riferimenti', 'La tua organizzazione', 'I criteri nel database', 'Le campagne, per canale', 'Prima di concludere', 'Una mail, con le tue parole.'];
 const $ = id => document.getElementById(id);
 const form = $('survey');
@@ -241,7 +240,6 @@ function showSection(index, focus = true) {
   $('success-view').hidden = true;
   clearError(); current = index; completed = false;
   panels.forEach((panel, i) => { panel.hidden = i !== index; });
-  $('section-tag').textContent = tags[index];
   $('section-title').textContent = headings[index];
   $('section-description').textContent = descriptions[index];
   $('step-label').textContent = `SEZIONE ${String(index + 1).padStart(2, '0')} / 06`;
