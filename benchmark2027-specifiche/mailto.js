@@ -1,6 +1,6 @@
-export const RECIPIENT='mirco.devito@mondadori.it';
+export const RECIPIENT='stefania.sposaro@mondadori.it';
 export const DEFAULT_SUBJECT='Benchmark 2027 · Questionario completato';
-export const DEFAULT_BODY='Ciao Mirco,\n\nho completato e inviato il questionario Benchmark 2027.\n\nLe informazioni sono pronte per la vostra verifica. Resto a disposizione per eventuali chiarimenti.\n\nGrazie!';
+export const DEFAULT_BODY='Ciao Stefania,\n\nho completato e inviato il questionario Benchmark 2027.\n\nLe informazioni sono pronte per la vostra verifica. Resto a disposizione per eventuali chiarimenti.\n\nGrazie!';
 
 export function createMailto(subject,body){
   if(typeof subject!=='string' || !subject.trim() || subject.length>200 || /[\r\n]/.test(subject)) throw Error('Inserisci un oggetto valido, entro 200 caratteri.');

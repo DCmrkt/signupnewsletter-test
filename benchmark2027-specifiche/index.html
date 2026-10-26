@@ -3,89 +3,45 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Benchmark 2027: compila il questionario e personalizza il messaggio da inviare al team Direct Channel con la tua app di posta.">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'none'; form-action 'none'; frame-src https://docs.google.com; object-src 'none'; base-uri 'none'">
-  <title>Benchmark 2027 · Raccolta specifiche | Direct Channel</title>
+  <meta name="description" content="Analisi Benchmark 2027: compila il questionario in sei passaggi e personalizza il messaggio per Stefania.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'none'; form-action https://docs.google.com; frame-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>Analisi Benchmark 2027 · Direct Channel</title>
   <link rel="icon" href="assets/favicon.ico">
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="benchmark-style.css">
-  <link rel="stylesheet" href="mailto-style.css">
-  <link rel="preload" as="image" href="assets/benchmark-lights.png" media="(min-width: 681px)">
-  <link rel="preload" as="image" href="assets/benchmark-lights-mobile.png" media="(max-width: 680px)">
-  <script type="module" src="mailto-flow.js"></script>
+  <link rel="stylesheet" href="data-lovers.css">
+  <script type="module" src="app.js"></script>
 </head>
-<body>
+<body id="top">
+  <div class="ambient" aria-hidden="true"><svg id="background-network" viewBox="0 0 1800 1100" preserveAspectRatio="xMidYMid slice" focusable="false"><path class="network-links"/><g class="network-dots"/></svg></div>
   <a class="skip" href="#questionnaire">Vai al questionario</a>
-  <div class="preview-bar">
-    <div class="container preview-content">
-      <p><span class="preview-dot" aria-hidden="true"></span><strong>Benchmark 2027</strong><span class="preview-explainer"> · Compila il questionario, poi scrivi a Mirco.</span></p>
-    </div>
-  </div>
-  <main id="top">
-    <section class="benchmark-hero" aria-labelledby="hero-title">
-      <header class="container benchmark-header">
-        <a class="benchmark-logo" href="#top" aria-label="Direct Channel, inizio pagina"><img src="assets/direct-channel-logo.png" alt="Direct Channel · Gruppo Mondadori" width="800" height="376"></a>
-        <span class="benchmark-status">Raccolta specifiche</span>
-      </header>
-      <svg class="benchmark-flower benchmark-flower-purple" viewBox="-36 -36 72 72" aria-hidden="true"><g stroke="#a855f7" stroke-width="9" stroke-linecap="round" fill="none"><path d="M0-31V31M-31 0H31M-22-22L22 22M22-22L-22 22M-12-29L12 29M12-29L-12 29"/></g></svg>
-      <svg class="benchmark-flower benchmark-flower-yellow" viewBox="-38 -38 76 76" aria-hidden="true"><g stroke="#facc15" stroke-width="10" stroke-linecap="round" fill="none"><path d="M0-34V34M-34 0H34M-24-24L24 24M24-24L-24 24M-14-32L14 32M14-32L-14 32"/></g></svg>
-      <div class="container benchmark-grid">
-        <div class="benchmark-intro"><h1 id="hero-title" class="benchmark-heading">Analisi<br>benchmark<br><span class="benchmark-year">2027</span></h1></div>
-        <div class="benchmark-copy">
-          <p>Aiutaci a leggere al meglio <strong>la tua organizzazione.</strong></p>
-          <ul class="benchmark-meta" aria-label="Il questionario"><li>Raccolta specifiche</li><li>6 sezioni guidate</li></ul>
-          <div class="benchmark-actions"><a class="button button-primary" href="#questionnaire">Compila il questionario <span aria-hidden="true">↓</span></a></div>
-          <p>Condividi le informazioni e i criteri per l’Analisi Benchmark 2027. Poi personalizza il messaggio per Mirco e invialo con la tua app di posta.</p>
-        </div>
-        <figure class="benchmark-lights"><picture><source media="(max-width: 680px)" srcset="assets/benchmark-lights-mobile.png"><img src="assets/benchmark-lights.png" width="826" height="1024" fetchpriority="high" decoding="async" alt="Nove lampadine colorate sospese, dalla pagina Analisi Benchmark 2027"></picture></figure>
-      </div>
+  <div class="preview-bar" id="preview-banner" hidden><div class="container preview-content"><p><strong id="mode-label">Anteprima</strong><span id="service-notice"></span></p><button id="demo-button" type="button" hidden>Prova il finale con dati di esempio ↗</button></div></div>
+  <header class="container site-header"><a href="#top" aria-label="Direct Channel, inizio pagina"><img src="assets/direct-channel-logo.png" width="800" height="376" alt="Direct Channel · Gruppo Mondadori"></a><span class="edition">Raccolta specifiche</span></header>
+  <main class="container dl-layout">
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow">LEGGIAMO I DATI, INSIEME</p>
+      <h1 id="page-title">Analisi<br> <span class="data-colour">Benchmark</span><br> <span class="year-colour">2027</span></h1>
+      <p class="lead">Aiutaci a leggere al meglio <strong>la tua organizzazione.</strong></p>
+      <p class="lead">Compila le sei sezioni con le informazioni e i criteri per l’analisi. Puoi tornare indietro e rivedere le risposte.</p>
     </section>
-    <section id="questionnaire" class="questionnaire-shell" aria-label="Questionario Benchmark 2027">
-      <div class="container workspace native-workspace">
-        <aside class="journey">
-          <p class="eyebrow">IL TUO PERCORSO</p>
-          <ol class="native-steps">
-            <li><a href="#google-questionnaire"><span class="step-number">01</span><span>Compila il questionario</span></a></li>
-            <li><a href="#message-card"><span class="step-number">02</span><span>Scrivi a Mirco</span></a></li>
-          </ol>
-          <div class="journey-note"><span aria-hidden="true">↗</span><p>Prima verifica la conferma di Google. Poi apri la mail con il tuo messaggio.</p></div>
-        </aside>
-        <div class="form-column">
-          <section id="google-questionnaire" class="form-card native-form-card" aria-labelledby="questionnaire-title">
-            <header class="section-header"><p class="section-tag">01 · IL QUESTIONARIO</p><h2 id="questionnaire-title">Le specifiche della tua organizzazione</h2><p>Compila le 6 sezioni del modulo e premi “Invia” al suo interno. Prima di passare al messaggio, attendi la conferma di Google.</p></header>
-            <iframe class="google-form" title="Modulo Google: Benchmark 2027 – Raccolta Specifiche" src="https://docs.google.com/forms/d/e/1FAIpQLSd8Vz9hgXzW0TqhN1DiXRrXZi-j7A3Vjb6yr4q_0z3sctdR5A/viewform?embedded=true" loading="lazy" referrerpolicy="no-referrer">Caricamento del modulo Google…</iframe>
-            <p class="native-help">Se il modulo non viene visualizzato, <a href="https://docs.google.com/forms/d/e/1FAIpQLSd8Vz9hgXzW0TqhN1DiXRrXZi-j7A3Vjb6yr4q_0z3sctdR5A/viewform" target="_blank" rel="noopener noreferrer">aprilo in una nuova scheda</a>. Le risposte sono registrate da Google quando completi l’invio del modulo.</p>
-            <div class="form-actions native-next"><a href="#message-card" class="button button-primary">Ho completato il questionario <span aria-hidden="true">↓</span></a></div>
-          </section>
-          <section id="message-card" class="form-card message-card" aria-labelledby="message-title">
-            <header class="section-header"><p class="section-tag">02 · IL TUO MESSAGGIO</p><h2 id="message-title">Scrivi a Mirco</h2><p>Parti da questo testo e adattalo come preferisci. Il pulsante apre una mail già compilata: potrai controllarla e inviarla dalla tua app di posta.</p></header>
-            <form id="mail-form">
-              <div class="mail-composer">
-                <div class="mail-heading"><span><span class="mail-icon" aria-hidden="true"></span>Il tuo messaggio</span><button class="text-button" id="reset-template" type="button">Ripristina template</button></div>
-                <dl class="mail-routing"><div><dt>A</dt><dd class="mail-address">mirco.devito@mondadori.it <span class="recipient-note">Unico destinatario</span></dd></div></dl>
-                <div class="mail-content">
-                  <div class="field"><label for="mail-subject">Oggetto</label><input class="text-input" id="mail-subject" type="text" maxlength="200" required value="Benchmark 2027 · Questionario completato"></div>
-                  <div class="field"><label for="mail-body">Messaggio · puoi modificarlo</label><textarea id="mail-body" class="long-answer" rows="9" maxlength="4000" required>Ciao Mirco,
-
-ho completato e inviato il questionario Benchmark 2027.
-
-Le informazioni sono pronte per la vostra verifica. Resto a disposizione per eventuali chiarimenti.
-
-Grazie!</textarea></div>
-                  <div class="composer-footer"><p>Il messaggio viene aperto nella tua app di posta. L’invio finale resta a te.</p><output id="message-count" for="mail-body"></output></div>
-                </div>
-              </div>
-              <label class="confirmation"><input id="confirm-google" type="checkbox" required><span>Ho verificato la conferma del questionario su Google e ho controllato questo messaggio.</span></label>
-              <div class="form-actions"><button id="copy-message" type="button" class="button button-secondary">Copia messaggio</button><a id="open-mail" class="button button-primary" href="mailto:mirco.devito@mondadori.it">Apri email precompilata <span aria-hidden="true">↗</span></a></div>
-              <p id="mail-status" class="mailto-status" role="status" aria-live="polite"></p>
-            </form>
-            <p class="mail-help">Non hai un’app di posta configurata? Copia il messaggio e incollalo nella tua webmail, indirizzandolo a <a href="mailto:mirco.devito@mondadori.it">mirco.devito@mondadori.it</a>.</p>
-          </section>
+    <section class="wizard-column" id="questionnaire" aria-label="Questionario Benchmark 2027">
+      <div id="form-view">
+        <div class="wizard-card">
+          <div class="progress-row"><span id="step-label" aria-live="polite">SEZIONE 01 / 06</span><span id="progress-description">I tuoi riferimenti</span></div>
+          <progress id="progress" max="6" value="1" aria-label="Sezione corrente">1 di 6</progress>
+          <nav aria-label="Sezioni del questionario"><ol id="step-list" class="step-list"></ol></nav>
+          <form id="survey" novalidate>
+            <header class="section-header"><p class="section-tag" id="section-tag">COMINCIAMO DA QUI</p><h2 id="section-title" tabindex="-1">I tuoi riferimenti</h2><p id="section-description">Presentati: ci aiuterà a collegare le specifiche alla tua organizzazione.</p></header>
+            <p class="required-note" id="required-note">I campi con <span aria-hidden="true">*</span> sono obbligatori.</p>
+            <div id="sections"></div>
+            <div id="form-error" role="alert" class="form-error" hidden></div>
+            <div class="form-actions"><button type="button" class="button button-secondary" id="back" hidden>← Indietro</button><button type="submit" class="button button-primary" id="next">Continua →</button></div>
+          </form>
         </div>
       </div>
+      <section id="success-view" class="success-card" hidden aria-labelledby="success-title"><span class="success-symbol" aria-hidden="true">✓</span><p class="eyebrow">ANTEPRIMA COMPLETATA</p><h2 id="success-title" tabindex="-1">Il tuo messaggio è pronto.</h2><p>Simulazione completata: nessuna risposta o email è stata inviata.</p><dl class="delivery-summary"><div><dt>Destinatario previsto</dt><dd>stefania.sposaro@mondadori.it</dd></div><div><dt>Oggetto</dt><dd id="success-subject"></dd></div></dl><pre id="success-message"></pre><button id="edit-message" class="button button-primary" type="button">Torna al messaggio ←</button></section>
+      <p id="announcement" class="sr-only" role="status" aria-live="polite"></p>
     </section>
   </main>
-  <footer class="container site-footer"><span>Direct Channel · Gruppo Mondadori</span><span>Benchmark 2027 · Raccolta specifiche</span><details><summary>Informazioni sui dati</summary><p>Direct Channel raccoglie i riferimenti e le specifiche dell’Analisi Benchmark 2027 tramite il modulo Google originale, incorporato in questa pagina. Le impostazioni del modulo, inclusa l’eventuale copia delle risposte, restano quelle di Google Forms. Il box del messaggio prepara una mail nella tua app di posta: nessuna notifica viene inviata automaticamente dalla landing. Il testo resta nella scheda fino all’apertura della mail e non viene salvato dalla pagina. Non inserire dati di singoli donatori o credenziali. Questa pagina non usa analytics. <a href="https://dcmentor.github.io/webinar/privacy/" target="_blank" rel="noopener noreferrer">Informativa Direct Channel</a>.</p></details></footer>
-  <noscript><p class="container">Per precompilare il messaggio nell’app di posta è necessario JavaScript. Puoi comunque copiare il testo e scrivere a mirco.devito@mondadori.it.</p></noscript>
+  <footer class="container site-footer"><span>Direct Channel · Gruppo Mondadori</span><a href="https://dcmentor.github.io/webinar/privacy/" target="_blank" rel="noopener noreferrer">Informativa Direct Channel</a></footer>
+  <noscript><p class="container">Per il percorso guidato è necessario JavaScript. Puoi <a href="https://docs.google.com/forms/d/e/1FAIpQLSd8Vz9hgXzW0TqhN1DiXRrXZi-j7A3Vjb6yr4q_0z3sctdR5A/viewform">compilare il modulo originale</a> e scrivere a stefania.sposaro@mondadori.it.</p></noscript>
 </body>
 </html>
