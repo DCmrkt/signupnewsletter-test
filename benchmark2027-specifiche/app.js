@@ -145,7 +145,7 @@ sections.forEach((section, index) => {
   const button = element('button', 'step-button');
   button.type = 'button';
   button.setAttribute('aria-label', `Sezione ${index + 1}: ${labels[index]}`);
-  button.append(element('span', 'step-number', String(index + 1).padStart(2, '0')), element('span', '', labels[index]));
+  button.append(element('span', 'step-number', String(index + 1)), element('span', '', labels[index]));
   button.addEventListener('click', () => { if (index <= furthest) showSection(index); });
   li.append(button);
   $('step-list').append(li);
@@ -193,10 +193,10 @@ function answerText(record){const values=record.input?[record.input.value.trim()
 function updateReview(){for(const[id,record]of answers)reviewGroups[record.sectionIndex].rows.get(id).textContent=answerText(record);}
 function placeQuestionFields(inReview){for(const record of answers.values())(inReview?reviewGroups[record.sectionIndex].editor:panels[record.sectionIndex]).append(record.wrapper);if(inReview)updateReview();}
 function clearError(){ $('form-error').hidden=true;for(const input of form.querySelectorAll('input,textarea')){input.classList.remove('field-error');input.removeAttribute('aria-invalid');input.setCustomValidity('');}}
-function updateNav(){for(const[index,button]of[...$('step-list').querySelectorAll('button')].entries()){button.disabled=index>furthest;button.classList.toggle('complete',index<current);if(index===current)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');button.querySelector('.step-number').textContent=index<current?'✓':String(index+1).padStart(2,'0');}}
+function updateNav(){for(const[index,button]of[...$('step-list').querySelectorAll('button')].entries()){button.disabled=index>furthest;button.classList.toggle('complete',index<current);if(index===current)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');button.querySelector('.step-number').textContent=index<current?'✓':String(index+1);}}
 function showSection(index,focus=true){
  $('form-view').hidden=false;$('success-view').hidden=true;clearError();current=index;placeQuestionFields(index===5);panels.forEach((panel,i)=>panel.hidden=i!==index);
- $('section-title').textContent=headings[index];$('section-description').textContent=descriptions[index];$('step-label').textContent='SEZIONE '+String(index+1).padStart(2,'0')+' / 06';$('progress-description').textContent=labels[index];$('progress').value=index+1;
+ $('section-title').textContent=headings[index];$('section-description').textContent=descriptions[index];$('step-label').textContent='SEZIONE '+String(index+1)+' DI 6';$('progress-description').textContent=labels[index];$('progress').value=index+1;
  $('back').hidden=index===0;$('required-note').hidden=index===5;$('next').textContent=index===5?(PREVIEW?'Simula la conferma →':'Conferma e registra'):(index===4?'Rivedi le risposte →':'Continua →');$('next').disabled=index===5&&saveAttempted;updateNav();$('sections').scrollTop=0;
  if(focus){$('section-title').focus({preventScroll:true});$('questionnaire').scrollIntoView({behavior:'instant',block:'start'});}
 }
