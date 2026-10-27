@@ -33,8 +33,17 @@ export function createRecapPdf(snapshot, { jsPDF, fontBase64 }) {
   pdf.setProperties({ title: 'Analisi Benchmark 2027 - Riepilogo', creator: 'Direct Channel' });
   const margin = 18, width = 174, bottom = 276;
   let y = margin;
-  // Preserve literal database codes and signed values exactly as entered.
-  const clean = value => String(value);
+  const font = pdf.getFont().metadata;
+  const sourceText = snapshot.groups.flatMap(group => [group.title, ...group.questions.flatMap(question => [question.title, question.value])]).join('\n');
+  // Make missing glyphs explicit; never silently remove parts of a database criterion.
+  // Choose a marker absent from the original so literal codes remain distinguishable.
+  let markerStart = '[U+', markerEnd = ']';
+  while (sourceText.includes(markerStart)) { markerStart = '[' + markerStart; markerEnd += ']'; }
+  const missing = character => !['\n', '\r'].includes(character) && font.characterToGlyph(character.codePointAt(0)) === 0;
+  const hasMissingGlyphs = [...sourceText].some(missing);
+  const clean = value => [...String(value)].map(character => missing(character)
+    ? markerStart + character.codePointAt(0).toString(16).toUpperCase().padStart(4, '0') + markerEnd
+    : character).join('');
   function nextPage() {
     pdf.addPage();
     pdf.setTextColor(99, 113, 140); pdf.setFontSize(8);
@@ -55,6 +64,7 @@ export function createRecapPdf(snapshot, { jsPDF, fontBase64 }) {
   const date = new Intl.DateTimeFormat('it-IT', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/Rome' }).format(new Date(snapshot.generatedAt));
   text(`Esportato il ${date} - ${snapshot.groups.flatMap(group => group.questions).length} risposte`, { size: 9, color: [99, 113, 140] });
   text('Copia delle risposte presenti nel riepilogo al momento del download.', { size: 9, color: [99, 113, 140], after: 8 });
+  if (hasMissingGlyphs) text(`I simboli non coperti dal font sono indicati con il loro codice Unicode, ad esempio ${markerStart}4E2D${markerEnd}. Le risposte originali nel sito restano inalterate.`, { size: 9, color: [99, 113, 140], after: 8 });
   for (const [index, group] of snapshot.groups.entries()) {
     if (y + 32 > bottom) nextPage();
     pdf.setDrawColor(238, 163, 45); pdf.setLineWidth(.6); pdf.line(margin, y - 6, margin + 12, y - 6);
