@@ -1,6 +1,7 @@
 import { sections } from './questions.js';
 import { buildGoogleSubmission, postGoogleSubmission } from './google-submission.js?v=20261027-anonymous';
-import { createMailto, DEFAULT_SUBJECT } from './mailto.js';
+import { createMailto, DEFAULT_SUBJECT, RECIPIENT, RECIPIENT_NAME } from './mailto.js?v=20261027-review';
+import { createRecapSnapshot, downloadRecapPdf } from './recap-pdf.js';
 import { launchConfetti } from './confetti.js';
 
 const PREVIEW = new URLSearchParams(location.search).get('preview') === '1';
@@ -23,9 +24,10 @@ let furthest = 0;
 let saveAttempted = false;
 let previouslySubmitted = false;
 let inFlight = false;
+let pdfGenerating = false;
 let messageOnlyView = false;
 const mailEdited={subject:false,body:false};
-const compactIntro = window.matchMedia?.('(max-width: 800px)');
+const compactIntro = window.matchMedia?.('(max-width: 800px), (max-height: 820px)');
 if (compactIntro) {
   const setIntroLayout = () => { $('questionnaire-info').open = !compactIntro.matches; };
   setIntroLayout(); compactIntro.addEventListener('change', setIntroLayout);
@@ -128,7 +130,7 @@ function choiceField(question) {
         wrapper.querySelector('.other-answer').hidden = true;
       }
       clearError();
-      invalidateSubmission(); updateReview();
+      invalidateSubmission(); resetSectionConfirmation(answers.get(question.id).sectionIndex); updateReview();
     });
     wrapper.append(clear);
   }
@@ -158,7 +160,11 @@ sections.forEach((section, index) => {
 
 const final = panels[5];
 const review = element('section', 'answer-review'); review.id = 'answer-review';
-review.append(element('h3', '', 'Le tue risposte'), element('p', 'review-intro', 'Tutto il questionario, prima dell’invio. Apri “Modifica” per aggiornare una sezione.'));
+const reviewToolbar = element('div', 'review-toolbar');
+const pdfButton = element('button', 'button button-secondary', 'Scarica PDF ↓'); pdfButton.type = 'button'; pdfButton.id = 'download-recap-pdf';
+const pdfStatus = element('p', 'pdf-status'); pdfStatus.setAttribute('role', 'status');
+reviewToolbar.append(element('h3', '', 'Le tue risposte'), pdfButton);
+review.append(reviewToolbar, pdfStatus, element('p', 'review-intro', 'Tutto il questionario, prima dell’invio. Apri “Modifica” per aggiornare una sezione.'));
 const reviewGroups = sections.slice(0,5).map((section,index) => {
   const group = element('section', 'review-group');
   const heading = element('h4', '', `${String(index + 1).padStart(2,'0')} · ${labels[index]}`);
@@ -174,8 +180,15 @@ const reviewGroups = sections.slice(0,5).map((section,index) => {
   summary.setAttribute('aria-label', `Modifica le risposte: ${labels[index]}`);
   summary.append(element('span','edit-closed','Modifica'),element('span','edit-open','Chiudi modifica'));
   const editor = element('div','review-editor'); details.append(summary,editor);
-  group.append(heading,values,details); review.append(group);
-  return {details,editor,rows};
+  const confirmSection = element('button', 'review-confirm', 'Conferma');
+  confirmSection.type = 'button'; confirmSection.dataset.confirmSection = index;
+  confirmSection.setAttribute('aria-label', `Conferma la sezione: ${labels[index]}`); confirmSection.setAttribute('aria-pressed', 'false');
+  confirmSection.addEventListener('click', () => {
+    clearError(); if (!validatePanel(index)) return; updateReview(); details.open = false;
+    confirmSection.setAttribute('aria-pressed', 'true'); confirmSection.textContent = 'Confermato ✓';
+  });
+  group.append(heading,values,details,confirmSection); review.append(group);
+  return {details,editor,rows,confirmSection};
 });
 final.append(review);
 const recommendation = element('div', 'recommendation');
@@ -216,10 +229,21 @@ function validatePanel(index){
  if(current===5&&index<5)reviewGroups[index].details.open=true;else if(current!==index)showSection(index);
  invalid.setAttribute('aria-invalid','true');invalid.classList.add('field-error');$('form-error').textContent=invalid.validationMessage;$('form-error').hidden=false;invalid.focus();return false;
 }
+function resetSectionConfirmation(index){const button=reviewGroups[index].confirmSection;button.setAttribute('aria-pressed','false');button.textContent='Conferma';}
 function invalidateSubmission(){saveAttempted=false;confirmed.checked=false;$('next').disabled=false;if(current===5)$('next').textContent=PREVIEW?'Simula la conferma →':'Conferma e registra';saveStatus.textContent='';}
-for(const eventName of['input','change'])form.addEventListener(eventName,event=>{clearError();if([...answers.values()].some(record=>record.wrapper.contains(event.target))){invalidateSubmission();if(current===5)updateReview();}});
+for(const eventName of['input','change'])form.addEventListener(eventName,event=>{clearError();const changed=[...answers.values()].find(record=>record.wrapper.contains(event.target));if(changed){invalidateSubmission();resetSectionConfirmation(changed.sectionIndex);if(current===5)updateReview();}});
 function validateQuestionnaire(){for(let index=0;index<5;index++)if(!validatePanel(index))return false;return true;}
 function questionnaireAnswers(){const values={},other={};for(const[id,record]of answers){values[id]=record.input?[record.input.value]:record.inputs.filter(input=>input.checked).map(input=>input.value);if(record.otherChoice?.checked)other[id]=record.otherInput.value;}return{values,other};}
+pdfButton.addEventListener('click',async()=>{
+ const {values,other}=questionnaireAnswers();const snapshot=createRecapSnapshot(values,other);
+ pdfGenerating=true;pdfButton.disabled=true;pdfStatus.textContent='Preparazione del PDF…';
+ try{await downloadRecapPdf(snapshot);pdfStatus.textContent='PDF pronto con le risposte attuali.';}
+ catch{pdfStatus.textContent='Non è stato possibile generare il PDF. Riprova: le risposte restano nella pagina.';}
+ finally{pdfGenerating=false;pdfButton.disabled=inFlight;}
+});
+$('mail-title').textContent=`Un messaggio per ${RECIPIENT_NAME}`;
+$('mail-recipient').textContent=RECIPIENT;
+$('open-email').textContent=`Apri email per ${RECIPIENT_NAME} ↗`;
 function updateMailLink(showError=false){
  try{$('open-email').href=createMailto($('mail-subject').value,$('mail-body').value);$('open-email').setAttribute('aria-disabled','false');$('mail-error').hidden=true;return true;}
  catch(error){$('open-email').removeAttribute('href');$('open-email').setAttribute('aria-disabled','true');if(showError){$('mail-error').textContent=error.message;$('mail-error').hidden=false;}return false;}
@@ -228,7 +252,7 @@ function prepareMailDraft(){
  if(!mailEdited.subject)$('mail-subject').value=DEFAULT_SUBJECT;
  if(!mailEdited.body){
   const organization=answers.get('479301265').input.value.trim(),name=answers.get('2092238618').input.value.trim();
-  $('mail-body').value='Ciao Stefania,\n\nho completato e inviato il questionario Benchmark 2027'+(organization?' per '+organization:'')+'.\nConfermo che le risposte sono definitive e potete procedere con l’elaborazione.\n\nResto a disposizione per eventuali chiarimenti.\n\nGrazie'+(name?',\n'+name:'!');
+  $('mail-body').value='Ciao '+RECIPIENT_NAME+',\n\nho completato e inviato il questionario Benchmark 2027'+(organization?' per '+organization:'')+'.\nConfermo che le risposte sono definitive e potete procedere con l’elaborazione.\n\nResto a disposizione per eventuali chiarimenti.\n\nGrazie'+(name?',\n'+name:'!');
  }
  $('mail-card').hidden=false;$('mail-status').textContent='';updateMailLink();
 }
@@ -243,7 +267,7 @@ function showCompletion(preview){
  messageOnlyView=false;$('edit-review').textContent='Rivedi le risposte ←';$('success-view').querySelector('.success-symbol').textContent='✓';
  $('success-eyebrow').textContent=preview?'ANTEPRIMA COMPLETATA':'INVIO COMPLETATO';
  $('success-title').textContent=preview?'Riepilogo confermato.':'Questionario inviato.';
- $('success-description').textContent=preview?'Simulazione completata: nessuna risposta o email è stata inviata.':'Conferma ora a Stefania la versione definitiva delle tue risposte.';
+ $('success-description').textContent=preview?'Simulazione completata: nessuna risposta o email è stata inviata.':`Conferma ora a ${RECIPIENT_NAME} la versione definitiva delle tue risposte.`;
  prepareMailDraft();
  $('form-view').hidden=true;$('success-view').hidden=false;$('success-title').focus({preventScroll:true});
  $('announcement').textContent=preview?'Simulazione completata. Nessuna risposta o email è stata inviata.':'Richiesta di invio completata.';
@@ -263,7 +287,7 @@ async function registerQuestionnaire(){
   saveStatus.textContent='Invio in corso…';$('next').textContent='Invio in corso…';$('announcement').textContent='Invio del questionario in corso.';
   previouslySubmitted=true;await postGoogleSubmission(submission);showCompletion(false);
  }catch(error){saveAttempted=false;saveStatus.textContent=error.message||'Invio non riuscito. Le risposte restano nel riepilogo.';$('announcement').textContent=saveStatus.textContent;}
- finally{inFlight=false;restoreControls();form.removeAttribute('aria-busy');updateNav();$('next').disabled=saveAttempted;$('next').textContent='Conferma e registra';}
+ finally{inFlight=false;restoreControls();pdfButton.disabled=pdfGenerating;form.removeAttribute('aria-busy');updateNav();$('next').disabled=saveAttempted;$('next').textContent='Conferma e registra';}
 }
 form.addEventListener('submit',event=>{event.preventDefault();if(inFlight)return;if(current===5){if(saveAttempted)showCompletion(PREVIEW);else registerQuestionnaire();return;}if(!validatePanel(current))return;furthest=Math.max(furthest,current+1);showSection(current+1);});
 $('back').addEventListener('click',()=>showSection(Math.max(0,current-1)));
@@ -272,6 +296,6 @@ $('demo-button').addEventListener('click',()=>{for(const record of answers.value
 showSection(0,false);
 if(new URLSearchParams(location.search).get('message')==='1'){
  messageOnlyView=true;prepareMailDraft();$('form-view').hidden=true;$('success-view').hidden=false;
- $('success-title').textContent='Prepara il messaggio.';$('success-description').textContent='Se hai già inviato il questionario, conferma a Stefania la versione definitiva.';
+ $('success-title').textContent='Prepara il messaggio.';$('success-description').textContent=`Se hai già inviato il questionario, conferma a ${RECIPIENT_NAME} la versione definitiva.`;
  $('success-view').querySelector('.success-symbol').textContent='↗';$('edit-review').textContent='Vai al questionario ←';
 }
