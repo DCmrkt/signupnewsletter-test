@@ -1,5 +1,7 @@
 import { sections } from './questions.js';
 import { buildGoogleSubmission, postGoogleSubmission } from './google-submission.js?v=20261027-anonymous';
+import { createMailto, DEFAULT_SUBJECT } from './mailto.js';
+import { launchConfetti } from './confetti.js';
 
 const PREVIEW = new URLSearchParams(location.search).get('preview') === '1';
 const labels = ['I tuoi riferimenti', 'La tua organizzazione', 'Il tuo database', 'I macro-canali', 'Ultime indicazioni', 'Riepilogo e conferma'];
@@ -21,6 +23,8 @@ let furthest = 0;
 let saveAttempted = false;
 let previouslySubmitted = false;
 let inFlight = false;
+let messageOnlyView = false;
+const mailEdited={subject:false,body:false};
 const compactIntro = window.matchMedia?.('(max-width: 800px)');
 if (compactIntro) {
   const setIntroLayout = () => { $('questionnaire-info').open = !compactIntro.matches; };
@@ -196,7 +200,7 @@ function showSection(index,focus=true){
  $('form-view').hidden=false;$('success-view').hidden=true;clearError();current=index;placeQuestionFields(index===5);panels.forEach((panel,i)=>panel.hidden=i!==index);
  $('section-title').textContent=headings[index];$('section-description').textContent=descriptions[index];$('step-label').textContent='SEZIONE '+String(index+1)+' DI 6';$('progress-description').textContent=labels[index];$('progress').value=index+1;
  const compact=index>0&&index<5;$('section-title').classList.toggle('sr-only',compact);$('section-description').hidden=compact;
- $('back').hidden=index===0;$('required-note').hidden=index>0;$('next').textContent=index===5?(PREVIEW?'Simula la conferma →':'Conferma e registra'):(index===4?'Rivedi le risposte →':'Continua →');$('next').disabled=index===5&&saveAttempted;updateNav();$('sections').scrollTop=0;form.scrollTop=0;
+ $('back').hidden=index===0;$('required-note').hidden=index>0;$('next').textContent=index===5?(saveAttempted?'Torna al messaggio →':PREVIEW?'Simula la conferma →':'Conferma e registra'):(index===4?'Rivedi le risposte →':'Continua →');$('next').disabled=false;updateNav();$('sections').scrollTop=0;form.scrollTop=0;
  if(focus){$('section-title').focus({preventScroll:true});$('questionnaire').scrollIntoView({behavior:'instant',block:'start'});}
 }
 function validatePanel(index){
@@ -212,20 +216,41 @@ function validatePanel(index){
  if(current===5&&index<5)reviewGroups[index].details.open=true;else if(current!==index)showSection(index);
  invalid.setAttribute('aria-invalid','true');invalid.classList.add('field-error');$('form-error').textContent=invalid.validationMessage;$('form-error').hidden=false;invalid.focus();return false;
 }
-function invalidateSubmission(){saveAttempted=false;confirmed.checked=false;$('next').disabled=false;saveStatus.textContent='';}
+function invalidateSubmission(){saveAttempted=false;confirmed.checked=false;$('next').disabled=false;if(current===5)$('next').textContent=PREVIEW?'Simula la conferma →':'Conferma e registra';saveStatus.textContent='';}
 for(const eventName of['input','change'])form.addEventListener(eventName,event=>{clearError();if([...answers.values()].some(record=>record.wrapper.contains(event.target))){invalidateSubmission();if(current===5)updateReview();}});
 function validateQuestionnaire(){for(let index=0;index<5;index++)if(!validatePanel(index))return false;return true;}
 function questionnaireAnswers(){const values={},other={};for(const[id,record]of answers){values[id]=record.input?[record.input.value]:record.inputs.filter(input=>input.checked).map(input=>input.value);if(record.otherChoice?.checked)other[id]=record.otherInput.value;}return{values,other};}
+function updateMailLink(showError=false){
+ try{$('open-email').href=createMailto($('mail-subject').value,$('mail-body').value);$('open-email').setAttribute('aria-disabled','false');$('mail-error').hidden=true;return true;}
+ catch(error){$('open-email').removeAttribute('href');$('open-email').setAttribute('aria-disabled','true');if(showError){$('mail-error').textContent=error.message;$('mail-error').hidden=false;}return false;}
+}
+function prepareMailDraft(){
+ if(!mailEdited.subject)$('mail-subject').value=DEFAULT_SUBJECT;
+ if(!mailEdited.body){
+  const organization=answers.get('479301265').input.value.trim(),name=answers.get('2092238618').input.value.trim();
+  $('mail-body').value='Ciao Stefania,\n\nho completato e inviato il questionario Benchmark 2027'+(organization?' per '+organization:'')+'.\nConfermo che le risposte sono definitive e potete procedere con l’elaborazione.\n\nResto a disposizione per eventuali chiarimenti.\n\nGrazie'+(name?',\n'+name:'!');
+ }
+ $('mail-card').hidden=false;$('mail-status').textContent='';updateMailLink();
+}
+for(const key of ['subject','body'])$('mail-'+key).addEventListener('input',()=>{mailEdited[key]=true;$('mail-status').textContent='';updateMailLink(true);});
+$('open-email').addEventListener('click',event=>{
+ if(!updateMailLink(true)){event.preventDefault();$('mail-body').focus();return;}
+ if(PREVIEW)event.preventDefault();
+ $('mail-status').textContent=PREVIEW?'Anteprima: nessuna app di posta è stata aperta.':'Completa l’invio dalla tua app di posta.';
+ launchConfetti($('open-email'));
+});
 function showCompletion(preview){
+ messageOnlyView=false;$('edit-review').textContent='Rivedi le risposte ←';$('success-view').querySelector('.success-symbol').textContent='✓';
  $('success-eyebrow').textContent=preview?'ANTEPRIMA COMPLETATA':'INVIO COMPLETATO';
  $('success-title').textContent=preview?'Riepilogo confermato.':'Questionario inviato.';
- $('success-description').textContent=preview?'Simulazione completata: nessuna risposta o email è stata inviata.':'La richiesta di invio è stata completata. Puoi tornare al riepilogo per consultare le risposte.';
+ $('success-description').textContent=preview?'Simulazione completata: nessuna risposta o email è stata inviata.':'Conferma ora a Stefania la versione definitiva delle tue risposte.';
+ prepareMailDraft();
  $('form-view').hidden=true;$('success-view').hidden=false;$('success-title').focus({preventScroll:true});
  $('announcement').textContent=preview?'Simulazione completata. Nessuna risposta o email è stata inviata.':'Richiesta di invio completata.';
 }
 async function registerQuestionnaire(){
  if(saveAttempted||inFlight)return;clearError();if(!validateQuestionnaire()||!validatePanel(5))return;
- if(PREVIEW){showCompletion(true);return;}
+ if(PREVIEW){saveAttempted=true;showCompletion(true);return;}
  if(previouslySubmitted&&!window.confirm('Hai già avviato un invio. Ripeterlo potrebbe creare una seconda risposta. Verifica con il team se il questionario è già arrivato prima di procedere. Vuoi inviare nuovamente?'))return;
  let restoreControls=()=>{};
  try{
@@ -240,8 +265,13 @@ async function registerQuestionnaire(){
  }catch(error){saveAttempted=false;saveStatus.textContent=error.message||'Invio non riuscito. Le risposte restano nel riepilogo.';$('announcement').textContent=saveStatus.textContent;}
  finally{inFlight=false;restoreControls();form.removeAttribute('aria-busy');updateNav();$('next').disabled=saveAttempted;$('next').textContent='Conferma e registra';}
 }
-form.addEventListener('submit',event=>{event.preventDefault();if(current===5){registerQuestionnaire();return;}if(!validatePanel(current))return;furthest=Math.max(furthest,current+1);showSection(current+1);});
+form.addEventListener('submit',event=>{event.preventDefault();if(inFlight)return;if(current===5){if(saveAttempted)showCompletion(PREVIEW);else registerQuestionnaire();return;}if(!validatePanel(current))return;furthest=Math.max(furthest,current+1);showSection(current+1);});
 $('back').addEventListener('click',()=>showSection(Math.max(0,current-1)));
-$('edit-review').addEventListener('click',()=>{confirmed.checked=false;showSection(5);});
+$('edit-review').addEventListener('click',()=>{const nextSection=messageOnlyView?0:5;messageOnlyView=false;confirmed.checked=false;showSection(nextSection);});
 $('demo-button').addEventListener('click',()=>{for(const record of answers.values()){if(record.input&&!record.input.value.trim()){const examples={email:'referente@example.org','2092238618':'Giulia Rossi','479301265':'Fondazione Esempio'};record.input.value=examples[record.question.id]||'Esempio dimostrativo: criteri e codici da condividere con il team.';}else if(record.inputs&&!record.inputs.some(input=>input.checked))record.inputs[0].checked=true;}furthest=5;showSection(5);$('announcement').textContent='Dati di esempio inseriti. Rileggi e conferma il riepilogo.';});
 showSection(0,false);
+if(new URLSearchParams(location.search).get('message')==='1'){
+ messageOnlyView=true;prepareMailDraft();$('form-view').hidden=true;$('success-view').hidden=false;
+ $('success-title').textContent='Prepara il messaggio.';$('success-description').textContent='Se hai già inviato il questionario, conferma a Stefania la versione definitiva.';
+ $('success-view').querySelector('.success-symbol').textContent='↗';$('edit-review').textContent='Vai al questionario ←';
+}
