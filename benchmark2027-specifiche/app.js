@@ -1,31 +1,30 @@
-import './network.js';
 import { sections } from './questions.js';
-import { RECIPIENT, createMailto } from './mailto.js';
-import { buildGoogleSubmission, postGoogleSubmission } from './google-submission.js?v=20261026-background';
+import { buildGoogleSubmission, postGoogleSubmission } from './google-submission.js?v=20261027-confirmation';
 
 const PREVIEW = new URLSearchParams(location.search).get('preview') === '1';
-const MAX_MESSAGE = 4000;
-const labels = ['I tuoi riferimenti', 'La tua organizzazione', 'Il tuo database', 'I macro-canali', 'Ultime indicazioni', 'Il messaggio finale'];
+const labels = ['I tuoi riferimenti', 'La tua organizzazione', 'Il tuo database', 'I macro-canali', 'Ultime indicazioni', 'Riepilogo e conferma'];
 const descriptions = [
   'Presentati: ci aiuterà a collegare le specifiche alla tua organizzazione.',
   'Raccontaci come è strutturata la raccolta fondi e quali sono le vostre previsioni per il 2026.',
   'Condividi i criteri che ci permetteranno di interpretare correttamente le informazioni nel database.',
   'Per alcuni KPI, come l’attrition, forniremo un dettaglio per macro-canale. Aiutaci a classificare le campagne: quelle non riconducibili ai canali indicati saranno classificate come ALTRO.',
   'Segnala eventuali eccezioni o informazioni che vuoi condividere con il team.',
-  'Registra le risposte e personalizza il messaggio per Stefania. Dopo aver ricevuto la copia del questionario, puoi aprire la mail nella tua app di posta.'
+  'Rileggi tutte le risposte. Puoi modificare ogni sezione prima di confermare la registrazione.'
 ];
-const headings = ['I tuoi riferimenti', 'La tua organizzazione', 'I criteri nel database', 'Le campagne, per canale', 'Prima di concludere', 'Una mail, con le tue parole.'];
+const headings = ['I tuoi riferimenti', 'La tua organizzazione', 'I criteri nel database', 'Le campagne, per canale', 'Prima di concludere', 'Riepilogo e conferma'];
 const $ = id => document.getElementById(id);
 const form = $('survey');
 const answers = new Map();
 const panels = [];
 let current = 0;
 let furthest = 0;
-let bodyEdited = false;
-let subjectEdited = false;
-let completed = false;
 let saveAttempted = false;
 let previouslySubmitted = false;
+const compactIntro = window.matchMedia?.('(max-width: 800px)');
+if (compactIntro) {
+  const setIntroLayout = () => { $('questionnaire-info').open = !compactIntro.matches; };
+  setIntroLayout(); compactIntro.addEventListener('change', setIntroLayout);
+}
 if (PREVIEW) {
   document.getElementById('preview-banner').hidden = false;
   document.getElementById('mode-label').textContent = 'Anteprima interattiva';
@@ -124,7 +123,7 @@ function choiceField(question) {
         wrapper.querySelector('.other-answer').hidden = true;
       }
       clearError();
-      invalidateSubmission();
+      invalidateSubmission(); updateReview();
     });
     wrapper.append(clear);
   }
@@ -136,7 +135,10 @@ sections.forEach((section, index) => {
   const panel = element('section', 'question-panel');
   panel.setAttribute('aria-label', headings[index]);
   panel.hidden = index !== 0;
-  for (const question of section.questions) panel.append([0,1].includes(question.type) ? textField(question) : choiceField(question));
+  for (const question of section.questions) {
+    panel.append([0,1].includes(question.type) ? textField(question) : choiceField(question));
+    answers.get(question.id).sectionIndex = index;
+  }
   $('sections').append(panel);
   panels.push(panel);
   const li = element('li');
@@ -150,226 +152,86 @@ sections.forEach((section, index) => {
 });
 
 const final = panels[5];
+const review = element('section', 'answer-review'); review.id = 'answer-review';
+review.append(element('h3', '', 'Le tue risposte'), element('p', 'review-intro', 'Tutto il questionario, prima dell’invio. Apri “Modifica” per aggiornare una sezione.'));
+const reviewGroups = sections.slice(0,5).map((section,index) => {
+  const group = element('section', 'review-group');
+  const heading = element('h4', '', `${String(index + 1).padStart(2,'0')} · ${labels[index]}`);
+  const values = element('dl', 'review-values');
+  const rows = new Map();
+  for (const question of section.questions) {
+    const row = element('div'); row.dataset.reviewQuestion = question.id;
+    const value = element('dd'); value.dataset.reviewValue = '';
+    row.append(element('dt', '', question.title), value); values.append(row); rows.set(question.id,value);
+  }
+  const details = element('details', 'review-edit');
+  const summary = element('summary');
+  summary.setAttribute('aria-label', `Modifica le risposte: ${labels[index]}`);
+  summary.append(element('span','edit-closed','Modifica'),element('span','edit-open','Chiudi modifica'));
+  const editor = element('div','review-editor'); details.append(summary,editor);
+  group.append(heading,values,details); review.append(group);
+  return {details,editor,rows};
+});
+final.append(review);
 const recommendation = element('div', 'recommendation');
 recommendation.append(element('span', '', '↗'));
 const reminder = element('p');
 reminder.append(element('strong', '', 'Un’ultima raccomandazione.'), document.createTextNode(' Per la buona riuscita dell’analisi, assicurati che vengano caricate le azioni per le campagne di Direct Mailing del 2025–2026.'));
 recommendation.append(reminder);
 final.append(recommendation);
-const recap = element('dl', 'recap');
-for (const [key, title] of [['recap-name', 'Il tuo nome'], ['recap-org', 'Organizzazione']]) {
-  const item = element('div');
-  const value = element('dd'); value.id = key;
-  item.append(element('dt', '', title), value); recap.append(item);
-}
-final.append(recap);
-const saveBox = element('div', 'save-questionnaire');
-saveBox.append(element('h3', '', '1. Registra le risposte'));
-saveBox.append(element('p', '', 'Registra il questionario senza lasciare questa pagina. La copia delle risposte arriverà all’indirizzo email che hai indicato.'));
-const saveButton = element('button', 'button button-secondary', PREVIEW ? 'Simula il salvataggio' : 'Registra il questionario');
-saveButton.type = 'button'; saveButton.id = 'save-questionnaire';
-const saveStatus = element('p', 'save-status'); saveStatus.id = 'save-status'; saveStatus.setAttribute('role', 'status');
-const retryButton = element('button', 'text-button', 'Non ricevo la copia: verifica con Google ↗');
-retryButton.type = 'button'; retryButton.id = 'retry-questionnaire'; retryButton.hidden = true;
-saveBox.append(saveButton, saveStatus, retryButton); final.append(saveBox);
-const composer = element('div', 'mail-composer');
-const mailHeading = element('div', 'mail-heading');
-const mailLabel = element('span'); mailLabel.append(element('i', 'mail-icon'), document.createTextNode('2. Il messaggio per Stefania'));
-const reset = element('button', 'text-button', 'Ripristina template'); reset.type = 'button'; reset.id = 'reset-template';
-mailHeading.append(mailLabel, reset);
-const routing = element('dl', 'mail-routing');
-for (const [title, value, id] of [['A', RECIPIENT, 'recipient']]) {
-  const item = element('div'); const text = element('dd', 'mail-address', value); text.id = id;
-  if (id === 'recipient') text.append(element('span', 'recipient-note', 'Unico destinatario'));
-  item.append(element('dt', '', title), text); routing.append(item);
-}
-const mailContent = element('div', 'mail-content');
-const subjectBox = element('div', 'field');
-const subjectLabel = element('label', '', 'Oggetto'); subjectLabel.htmlFor = 'mail-subject';
-const subject = element('input', 'text-input'); subject.id = 'mail-subject'; subject.name = 'mail-subject'; subject.type = 'text'; subject.required = true; subject.maxLength = 200;
-subjectBox.append(subjectLabel, subject);
-const bodyBox = element('div', 'field');
-const bodyLabel = element('label', '', 'Il tuo messaggio'); bodyLabel.htmlFor = 'mail-body';
-const body = element('textarea', 'long-answer'); body.id = 'mail-body'; body.name = 'mail-body'; body.required = true; body.maxLength = MAX_MESSAGE; body.spellcheck = true; body.setAttribute('aria-describedby', 'message-tip message-count');
-bodyBox.append(bodyLabel, body);
-const footer = element('div', 'composer-footer');
-const tip = element('p', '', 'Puoi modificare il testo. Il pulsante apre la tua app di posta: premi Invia lì per spedire il messaggio.'); tip.id = 'message-tip';
-const count = element('output'); count.id = 'message-count'; count.htmlFor = 'mail-body';
-footer.append(tip, count);
-mailContent.append(subjectBox, bodyBox, footer);
-composer.append(mailHeading, routing, mailContent);
-final.append(composer);
-const confirmation = element('label', 'confirmation');
-const confirmed = element('input'); confirmed.type = 'checkbox'; confirmed.id = 'confirm-send'; confirmed.name = 'confirm-send'; confirmed.required = true; confirmed.disabled = true;
-const confirmText = element('span'); confirmText.append(document.createTextNode(PREVIEW ? 'Ho controllato il messaggio di esempio per ' : 'Ho ricevuto la copia delle risposte e ho riletto il messaggio per '), element('strong', '', RECIPIENT), document.createTextNode('.'));
-confirmation.append(confirmed, confirmText); final.append(confirmation);
-const copyRow = element('div', 'mail-copy-row');
-const copy = element('button', 'text-button', 'Copia messaggio'); copy.id = 'copy-message'; copy.type = 'button';
-copyRow.append(copy, element('p', '', 'Se la tua app di posta non si apre, copia il testo e incollalo nella webmail.'));
-final.append(copyRow);
-const templateStatus = element('p', 'template-status'); templateStatus.id = 'template-status'; templateStatus.setAttribute('role', 'status'); final.append(templateStatus);
 
-function read(id) { return answers.get(id).input.value.trim(); }
-function template() {
-  const name = read('2092238618') || '[Nome e cognome]';
-  const org = read('479301265') || '[Organizzazione]';
-  return `Ciao Stefania,\n\nho completato il questionario Benchmark 2027 per ${org}.\n\nTi confermo che le informazioni inserite sono definitive e pronte per l’elaborazione. Resto a disposizione per eventuali chiarimenti.\n\nGrazie,\n${name}\n${org}`;
+const confirmation = element('label','confirmation');
+const confirmed = element('input'); confirmed.type='checkbox'; confirmed.id='confirm-review'; confirmed.name='confirm-review'; confirmed.required=true;
+confirmation.append(confirmed,element('span','','Ho riletto il riepilogo e confermo le risposte del questionario.'));
+final.append(confirmation);
+const saveStatus=element('p','save-status'); saveStatus.id='registration-status'; saveStatus.setAttribute('role','status'); final.append(saveStatus);
+const googleConfirmation=element('section','google-confirmation'); googleConfirmation.id='google-confirmation'; googleConfirmation.hidden=true; googleConfirmation.setAttribute('aria-label','Conferma di registrazione Google');
+googleConfirmation.append(element('p','','La registrazione è completata quando nel riquadro compare la conferma di Google. Segui qui l’eventuale verifica richiesta.'));
+const googleFrameHost=element('div'); googleFrameHost.id='google-frame-host'; googleConfirmation.append(googleFrameHost); final.append(googleConfirmation);
+const retry=element('button','text-button','Il riquadro non funziona? Verifica in una scheda Google ↗'); retry.id='retry-questionnaire'; retry.type='button'; retry.hidden=true; final.append(retry);
+function answerText(record){const values=record.input?[record.input.value.trim()]:record.inputs.filter(input=>input.checked).map(input=>input===record.otherChoice?'Altro: '+(record.otherInput.value.trim()||'da specificare'):input.value);return values.filter(Boolean).join(' · ')||'Non compilato';}
+function updateReview(){for(const[id,record]of answers)reviewGroups[record.sectionIndex].rows.get(id).textContent=answerText(record);}
+function placeQuestionFields(inReview){for(const record of answers.values())(inReview?reviewGroups[record.sectionIndex].editor:panels[record.sectionIndex]).append(record.wrapper);if(inReview)updateReview();}
+function clearError(){ $('form-error').hidden=true;for(const input of form.querySelectorAll('input,textarea')){input.classList.remove('field-error');input.removeAttribute('aria-invalid');input.setCustomValidity('');}}
+function updateNav(){for(const[index,button]of[...$('step-list').querySelectorAll('button')].entries()){button.disabled=index>furthest;button.classList.toggle('complete',index<current);if(index===current)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');button.querySelector('.step-number').textContent=index<current?'✓':String(index+1).padStart(2,'0');}}
+function showSection(index,focus=true){
+ $('form-view').hidden=false;$('success-view').hidden=true;clearError();current=index;placeQuestionFields(index===5);panels.forEach((panel,i)=>panel.hidden=i!==index);
+ $('section-title').textContent=headings[index];$('section-description').textContent=descriptions[index];$('step-label').textContent='SEZIONE '+String(index+1).padStart(2,'0')+' / 06';$('progress-description').textContent=labels[index];$('progress').value=index+1;
+ $('back').hidden=index===0;$('required-note').hidden=index===5;$('next').textContent=index===5?(PREVIEW?'Simula la conferma →':'Conferma e registra'):(index===4?'Rivedi le risposte →':'Continua →');$('next').disabled=index===5&&saveAttempted;updateNav();$('sections').scrollTop=0;
+ if(focus){$('section-title').focus({preventScroll:true});$('questionnaire').scrollIntoView({behavior:'instant',block:'start'});}
 }
-function updateCount() { count.value = `${body.value.length.toLocaleString('it-IT')} / 4.000`; }
-function updateMessage() {
-  $('recap-name').textContent = read('2092238618') || 'Da compilare';
-  $('recap-org').textContent = read('479301265') || 'Da compilare';
-  if (!bodyEdited) body.value = template();
-  if (!subjectEdited) subject.value = `Benchmark 2027 · Questionario completato${read('479301265') ? ' — ' + read('479301265') : ''}`.slice(0,200);
-  updateCount();
+function validatePanel(index){
+ const controls=[];
+ for(const record of answers.values()){
+  if(record.sectionIndex!==index)continue;controls.push(...record.wrapper.querySelectorAll('input,textarea'));
+  if(record.inputs){record.inputs[0].setCustomValidity(record.question.required&&!record.inputs.some(input=>input.checked)?'Seleziona almeno una risposta.':'');if(record.otherChoice?.checked)record.otherInput.setCustomValidity(record.otherInput.value.trim()?'':'Specifica la risposta Altro.');}
+  else if(record.question.required&&!record.input.value.trim())record.input.setCustomValidity('Compila questo campo.');
+ }
+ if(index===5){confirmed.setCustomValidity(confirmed.checked?'':'Conferma di aver riletto tutte le risposte prima di registrare il questionario.');controls.push(confirmed);}
+ const invalid=controls.find(input=>!input.disabled&&!input.checkValidity());
+ if(!invalid)return true;
+ if(current===5&&index<5)reviewGroups[index].details.open=true;else if(current!==index)showSection(index);
+ invalid.setAttribute('aria-invalid','true');invalid.classList.add('field-error');$('form-error').textContent=invalid.validationMessage;$('form-error').hidden=false;invalid.focus();return false;
 }
-function clearError() {
-  $('form-error').hidden = true;
-  for (const input of form.querySelectorAll('input, textarea')) { input.classList.remove('field-error'); input.removeAttribute('aria-invalid'); input.setCustomValidity(''); }
+function invalidateSubmission(){saveAttempted=false;confirmed.checked=false;$('next').disabled=false;saveStatus.textContent='';retry.hidden=true;googleConfirmation.hidden=true;googleFrameHost.replaceChildren();}
+for(const eventName of['input','change'])form.addEventListener(eventName,event=>{clearError();if([...answers.values()].some(record=>record.wrapper.contains(event.target))){invalidateSubmission();if(current===5)updateReview();}});
+function validateQuestionnaire(){for(let index=0;index<5;index++)if(!validatePanel(index))return false;return true;}
+function questionnaireAnswers(){const values={},other={};for(const[id,record]of answers){values[id]=record.input?[record.input.value]:record.inputs.filter(input=>input.checked).map(input=>input.value);if(record.otherChoice?.checked)other[id]=record.otherInput.value;}return{values,other};}
+function registerQuestionnaire({showConfirmation=false,duplicateConfirmed=false}={}){
+ if(saveAttempted)return;clearError();if(!validateQuestionnaire()||!validatePanel(5))return;
+ if(PREVIEW){$('form-view').hidden=true;$('success-view').hidden=false;$('success-title').focus({preventScroll:true});$('announcement').textContent='Simulazione completata. Nessuna risposta o email è stata inviata.';return;}
+ if(previouslySubmitted&&!duplicateConfirmed&&!window.confirm('Hai già avviato un invio. Ripeterlo potrebbe creare una seconda risposta. Continua solo se Google non ha registrato il questionario. Vuoi inviare nuovamente?'))return;
+ try{
+  if(navigator.onLine===false)throw new Error('Sei offline. Riconnettiti e riprova: le risposte restano in questa pagina.');
+  const{values,other}=questionnaireAnswers();postGoogleSubmission(buildGoogleSubmission(values,other),{showConfirmation,confirmationContainer:showConfirmation?undefined:googleFrameHost});previouslySubmitted=true;
+ }catch(error){saveStatus.textContent=error.message;return;}
+ saveAttempted=true;$('next').disabled=true;retry.hidden=false;googleConfirmation.hidden=showConfirmation;
+ saveStatus.textContent=showConfirmation?'Controlla l’esito nella scheda Google.':'Controlla la conferma di registrazione nel riquadro qui sotto.';
+ if(!showConfirmation)googleConfirmation.scrollIntoView({behavior:'instant',block:'start'});
 }
-function updateNav() {
-  for (const [index, button] of [...$('step-list').querySelectorAll('button')].entries()) {
-    button.disabled = index > furthest;
-    button.classList.toggle('complete', index < current);
-    if (index === current) button.setAttribute('aria-current', 'step'); else button.removeAttribute('aria-current');
-    button.querySelector('.step-number').textContent = index < current ? '✓' : String(index + 1).padStart(2, '0');
-  }
-}
-function showSection(index, focus = true) {
-  if (completed) confirmed.checked = false;
-  $('form-view').hidden = false;
-  $('success-view').hidden = true;
-  clearError(); current = index; completed = false;
-  panels.forEach((panel, i) => { panel.hidden = i !== index; });
-  $('section-title').textContent = headings[index];
-  $('section-description').textContent = descriptions[index];
-  $('step-label').textContent = `SEZIONE ${String(index + 1).padStart(2, '0')} / 06`;
-  $('progress-description').textContent = labels[index];
-  $('progress').value = index + 1;
-  $('back').hidden = index === 0;
-  $('required-note').hidden = index === 5;
-  $('next').textContent = index === 5 ? (PREVIEW ? 'Simula il finale →' : 'Apri email precompilata ↗') : index === 4 ? 'Rivedi il messaggio →' : 'Continua →';
-  updateNav(); updateMessage(); $('sections').scrollTop = 0;
-  if (focus) { $('section-title').focus({preventScroll:true}); $('questionnaire').scrollIntoView({behavior:'instant', block:'start'}); }
-}
-function validatePanel(index) {
-  for (const record of answers.values()) {
-    if (!panels[index].contains(record.wrapper)) continue;
-    if (record.inputs) {
-      record.inputs[0].setCustomValidity(record.question.required && !record.inputs.some(input => input.checked) ? 'Seleziona almeno una risposta.' : '');
-      if (record.otherChoice?.checked) record.otherInput.setCustomValidity(record.otherInput.value.trim() ? '' : 'Specifica la risposta Altro.');
-    } else if (record.question.required && !record.input.value.trim()) record.input.setCustomValidity('Compila questo campo.');
-  }
-  if (index === 5) {
-    body.setCustomValidity(!body.value.trim() ? 'Scrivi il messaggio da inviare.' : body.value.length > MAX_MESSAGE ? 'Il messaggio può contenere al massimo 4.000 caratteri.' : '');
-    subject.setCustomValidity(subject.value.trim() ? '' : 'Scrivi un oggetto per la mail.');
-    confirmed.setCustomValidity(confirmed.checked ? '' : 'Conferma di aver ricevuto la copia delle risposte e controllato il messaggio prima di aprire la mail.');
-  }
-  const invalid = [...panels[index].querySelectorAll('input, textarea')].find(input => !input.disabled && !input.checkValidity());
-  if (invalid) {
-    invalid.setAttribute('aria-invalid', 'true'); invalid.classList.add('field-error');
-    $('form-error').textContent = invalid.validationMessage;
-    $('form-error').hidden = false;
-    invalid.focus(); return false;
-  }
-  return true;
-}
-form.addEventListener('input', event => {
-  clearError();
-  if ([...answers.values()].some(record => record.wrapper.contains(event.target))) invalidateSubmission();
-  if (event.target === body) { bodyEdited = true; templateStatus.textContent = ''; updateCount(); }
-  if (event.target === subject) subjectEdited = true;
-  if ([body,subject].includes(event.target)) confirmed.checked = false;
-  if (['answer-email','answer-2092238618','answer-479301265'].includes(event.target.id)) { updateMessage(); confirmed.checked = false; }
-});
-form.addEventListener('change', event => {
-  clearError();
-  if ([...answers.values()].some(record => record.wrapper.contains(event.target))) invalidateSubmission();
-});
-reset.addEventListener('click', () => {
-  bodyEdited = false; subjectEdited = false; confirmed.checked = false; updateMessage();
-  templateStatus.textContent = 'Template ripristinato con i riferimenti attuali. Puoi modificarlo di nuovo.';
-});
-$('back').addEventListener('click', () => showSection(Math.max(0, current - 1)));
-function invalidateSubmission() {
-  saveAttempted = false; saveButton.disabled = false; retryButton.hidden = true; saveStatus.textContent = ''; confirmed.checked = false; confirmed.disabled = true;
-}
-function validateQuestionnaire() {
-  for (let index = 0; index < 5; index++) {
-    if (!validatePanel(index)) { showSection(index); validatePanel(index); return false; }
-  }
-  return true;
-}
-function questionnaireAnswers() {
-  const values = {}, other = {};
-  for (const [id, record] of answers) {
-    values[id] = record.input ? [record.input.value] : record.inputs.filter(input => input.checked).map(input => input.value);
-    if (record.otherChoice?.checked) other[id] = record.otherInput.value;
-  }
-  return {values, other};
-}
-function saveQuestionnaire({showConfirmation=false,duplicateConfirmed=false}={}) {
-  if (saveAttempted) return;
-  clearError();
-  if (!validateQuestionnaire()) return;
-  if (!PREVIEW && previouslySubmitted && !duplicateConfirmed && !window.confirm('Hai già trasmesso questo questionario. Un altro invio può creare una seconda risposta. Per correggere quella esistente, usa il link nella copia ricevuta via email. Vuoi comunque inviare nuovamente le risposte?')) return;
-  if (!PREVIEW) {
-    try {
-      if (navigator.onLine === false) throw new Error('Sei offline. Riconnettiti e riprova: le risposte sono ancora in questa pagina.');
-      const {values, other} = questionnaireAnswers();
-      const submission = buildGoogleSubmission(values, other);
-      postGoogleSubmission(submission,{showConfirmation});
-      previouslySubmitted = true;
-    } catch (error) { saveStatus.textContent = error.message; return; }
-  }
-  saveAttempted = true; saveButton.disabled = true; retryButton.hidden = false; confirmed.checked = false; confirmed.disabled = false;
-  saveStatus.textContent = PREVIEW ? 'Simulazione: nessuna risposta è stata trasmessa. Puoi provare il box del messaggio.' : showConfirmation ? 'Completa l’eventuale verifica nella scheda Google, poi controlla la copia delle risposte nella tua email.' : `Richiesta di registrazione inviata. Attendi la copia delle risposte a ${read('email')} e controlla anche lo spam. Quando la ricevi, puoi confermare qui sotto e scrivere a Stefania.`;
-}
-saveButton.addEventListener('click', () => saveQuestionnaire());
-retryButton.addEventListener('click', () => {
-  if (!PREVIEW && !window.confirm('La copia può impiegare qualche minuto: controlla anche lo spam. Questa verifica ripete l’invio in una scheda Google e potrebbe creare una seconda risposta. Continua solo se non hai ricevuto la copia e devi verificare un problema. Vuoi continuare?')) return;
-  invalidateSubmission(); saveQuestionnaire({showConfirmation:true,duplicateConfirmed:true});
-});
-copy.addEventListener('click', async () => {
-  try { await navigator.clipboard.writeText(body.value); templateStatus.textContent = 'Messaggio copiato. Puoi incollarlo in una mail a ' + RECIPIENT + '.'; }
-  catch { body.focus(); body.select(); templateStatus.textContent = 'Il messaggio è selezionato: usa Copia e incollalo nella tua webmail.'; }
-});
-form.addEventListener('submit', event => {
-  event.preventDefault();
-  if (current === 5 && !PREVIEW && !saveAttempted) {
-    $('form-error').textContent = 'Prima registra il questionario con il pulsante sopra e controlla la copia delle risposte nella tua email.';
-    $('form-error').hidden = false; saveButton.focus(); return;
-  }
-  if (completed || !validatePanel(current)) return;
-  if (current < 5) { furthest = Math.max(furthest, current + 1); showSection(current + 1); return; }
-  // Revalidate every section: jumping back must never leave required answers unchecked.
-  if (!validateQuestionnaire()) return;
-  if (!PREVIEW) {
-    try {
-      const draft = createMailto(subject.value, body.value);
-      templateStatus.textContent = 'Completa l’invio nella tua app di posta. Se non si apre, usa Copia messaggio.';
-      window.location.href = draft;
-    } catch (error) { templateStatus.textContent = error.message; }
-    return;
-  }
-  completed = true;
-  $('success-subject').textContent = subject.value.trim();
-  $('success-message').textContent = body.value;
-  $('form-view').hidden = true; $('success-view').hidden = false;
-  $('success-title').focus({preventScroll:true}); $('questionnaire').scrollIntoView({behavior:'instant'});
-  $('announcement').textContent = 'Simulazione completata. Nessuna risposta o email è stata inviata.';
-});
-$('edit-message').addEventListener('click', () => {
-  $('success-view').hidden = true; $('form-view').hidden = false; confirmed.checked = false; showSection(5);
-});
-$('demo-button').addEventListener('click', () => {
-  for (const record of answers.values()) {
-    if (record.input && !record.input.value.trim()) {
-      const examples = {email:'referente@example.org','2092238618':'Giulia Rossi','479301265':'Fondazione Esempio'};
-      record.input.value = examples[record.question.id] || 'Esempio dimostrativo: criteri e codici da condividere con il team.';
-    } else if (record.inputs && !record.inputs.some(input => input.checked)) record.inputs[0].checked = true;
-  }
-  furthest = 5; showSection(5);
-  $('announcement').textContent = 'Sono stati aggiunti dati di esempio nei campi vuoti. Ora puoi provare il messaggio finale.';
-});
-showSection(0, false);
+form.addEventListener('submit',event=>{event.preventDefault();if(current===5){registerQuestionnaire();return;}if(!validatePanel(current))return;furthest=Math.max(furthest,current+1);showSection(current+1);});
+$('back').addEventListener('click',()=>showSection(Math.max(0,current-1)));
+retry.addEventListener('click',()=>{if(!window.confirm('Questa verifica ripete l’invio e potrebbe creare una risposta duplicata. Continua solo se nel riquadro Google non compare la conferma di registrazione. Vuoi continuare?'))return;saveAttempted=false;registerQuestionnaire({showConfirmation:true,duplicateConfirmed:true});});
+$('edit-review').addEventListener('click',()=>{confirmed.checked=false;showSection(5);});
+$('demo-button').addEventListener('click',()=>{for(const record of answers.values()){if(record.input&&!record.input.value.trim()){const examples={email:'referente@example.org','2092238618':'Giulia Rossi','479301265':'Fondazione Esempio'};record.input.value=examples[record.question.id]||'Esempio dimostrativo: criteri e codici da condividere con il team.';}else if(record.inputs&&!record.inputs.some(input=>input.checked))record.inputs[0].checked=true;}furthest=5;showSection(5);$('announcement').textContent='Dati di esempio inseriti. Rileggi e conferma il riepilogo.';});
+showSection(0,false);

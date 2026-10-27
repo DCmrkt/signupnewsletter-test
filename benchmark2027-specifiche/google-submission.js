@@ -2,7 +2,7 @@ import {sections} from './questions.js';
 
 let deliverySequence=0;
 
-export function postGoogleSubmission(submission,{showConfirmation=false}={}){
+export function postGoogleSubmission(submission,{showConfirmation=false,confirmationContainer}={}){
   const post=document.createElement('form');
   post.method='POST';post.action=submission.action;post.hidden=true;post.acceptCharset='UTF-8';
   let frame;
@@ -10,10 +10,14 @@ export function postGoogleSubmission(submission,{showConfirmation=false}={}){
   else{
     frame=document.createElement('iframe');
     frame.name='benchmark-google-delivery-'+(++deliverySequence);
-    frame.hidden=true;frame.title='Invio del questionario';frame.setAttribute('aria-hidden','true');
+    frame.hidden=!confirmationContainer;frame.title='Conferma del questionario con Google';
+    if(!confirmationContainer)frame.setAttribute('aria-hidden','true');
+    if(confirmationContainer) {
+      const action=new URL(post.action); action.searchParams.set('embedded','true'); post.action=action.href;
+    }
     post.target=frame.name;
     // noopener would turn this named target into a new tab. Never infer success from iframe load.
-    document.body.append(frame);
+    (confirmationContainer || document.body).append(frame);
   }
   for(const [name,value] of submission.fields){
     const field=document.createElement('input');field.type='hidden';field.name=name;field.value=value;post.append(field);

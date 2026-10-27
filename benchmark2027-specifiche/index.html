@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Analisi Benchmark 2027: compila il questionario in sei passaggi e personalizza il messaggio per Stefania.">
+  <meta name="description" content="Analisi Benchmark 2027: compila il questionario, rivedi tutte le risposte e conferma il riepilogo finale.">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'none'; form-action https://docs.google.com; frame-src https://docs.google.com; object-src 'none'; base-uri 'none'">
   <title>Analisi Benchmark 2027 · Direct Channel</title>
   <link rel="icon" href="assets/favicon.ico">
-  <link rel="stylesheet" href="data-lovers.css?v=20261026-minimal">
-  <script type="module" src="app.js?v=20261026-background"></script>
+  <link rel="stylesheet" href="data-lovers.css?v=20261027-confirm">
+  <script type="module" src="app.js?v=20261027-confirm"></script>
 </head>
 <body id="top">
-  <div class="ambient" aria-hidden="true"><svg id="background-network" viewBox="0 0 1800 1100" preserveAspectRatio="xMidYMid slice" focusable="false"><path class="network-links"/><g class="network-dots"/></svg></div>
+  <div class="ambient" aria-hidden="true"><div class="ambient-bulb bulb-left"></div><div class="ambient-bulb bulb-center"></div><div class="ambient-bulb bulb-right"></div></div>
   <a class="skip" href="#questionnaire">Vai al questionario</a>
   <div class="preview-bar" id="preview-banner" hidden><div class="container preview-content"><p><strong id="mode-label">Anteprima</strong><span id="service-notice"></span></p><button id="demo-button" type="button" hidden>Prova il finale con dati di esempio ↗</button></div></div>
   <header class="container site-header"><a href="#top" aria-label="Direct Channel, inizio pagina"><img src="assets/direct-channel-logo.png" width="800" height="376" alt="Direct Channel · Gruppo Mondadori"></a><span class="edition">Raccolta specifiche</span></header>
@@ -19,12 +19,12 @@
     <section class="intro" aria-labelledby="page-title">
       <div class="intro-heading">
         <h1 id="page-title"><span class="title-light">Analisi</span><span class="title-strong">Benchmark</span><span class="edition-year">Edizione <strong>2027</strong></span></h1>
-        <div class="benchmark-art" aria-hidden="true"><img src="assets/benchmark-bulbs.png" width="480" height="595" alt=""></div>
       </div>
       <div class="intro-copy">
         <p class="lead">Aiutaci a rendere ancora più efficace per la tua Organizzazione l'analisi Benchmark 2027!</p>
-        <p class="intro-details">[questo modulo prevede la compilazione di più sezioni: riceverai copia delle risposte alla tua email e avrai qualche giorno ancora per modificarle/integrarle in caso di bisogno!]</p>
-        <p class="intro-confirmation"><strong>Nota</strong>: Quando il questionario sarà completato, ti chiediamo gentilmente di inviarci una mail (<a href="mailto:stefania.sposaro@mondadori.it">stefania.sposaro@mondadori.it</a>) per confermarne la versione definitiva, così da poter procedere con l’elaborazione.</p>
+        <details class="questionnaire-info" id="questionnaire-info" open><summary>Informazioni sul questionario</summary><div>
+          <p class="intro-details">Il modulo prevede più sezioni. Alla fine troverai il riepilogo completo: potrai rileggere e modificare tutte le risposte prima di confermare la registrazione.</p>
+        </div></details>
       </div>
     </section>
     <section class="wizard-column" id="questionnaire" aria-label="Questionario Benchmark 2027">
@@ -42,11 +42,11 @@
           </form>
         </div>
       </div>
-      <section id="success-view" class="success-card" hidden aria-labelledby="success-title"><span class="success-symbol" aria-hidden="true">✓</span><p class="eyebrow">ANTEPRIMA COMPLETATA</p><h2 id="success-title" tabindex="-1">Il tuo messaggio è pronto.</h2><p>Simulazione completata: nessuna risposta o email è stata inviata.</p><dl class="delivery-summary"><div><dt>Destinatario previsto</dt><dd>stefania.sposaro@mondadori.it</dd></div><div><dt>Oggetto</dt><dd id="success-subject"></dd></div></dl><pre id="success-message"></pre><button id="edit-message" class="button button-primary" type="button">Torna al messaggio ←</button></section>
+      <section id="success-view" class="success-card" hidden aria-labelledby="success-title"><span class="success-symbol" aria-hidden="true">✓</span><p class="eyebrow">ANTEPRIMA COMPLETATA</p><h2 id="success-title" tabindex="-1">Riepilogo confermato.</h2><p>Simulazione completata: nessuna risposta o email è stata inviata.</p><button id="edit-review" class="button button-primary" type="button">Torna al riepilogo ←</button></section>
       <p id="announcement" class="sr-only" role="status" aria-live="polite"></p>
     </section>
   </main>
   <footer class="container site-footer"><span>Direct Channel · Gruppo Mondadori</span><a href="https://dcmentor.github.io/webinar/privacy/" target="_blank" rel="noopener noreferrer">Informativa Direct Channel</a></footer>
-  <noscript><p class="container">Per il percorso guidato è necessario JavaScript. Puoi <a href="https://docs.google.com/forms/d/e/1FAIpQLSd8Vz9hgXzW0TqhN1DiXRrXZi-j7A3Vjb6yr4q_0z3sctdR5A/viewform">compilare il modulo originale</a> e scrivere a stefania.sposaro@mondadori.it.</p></noscript>
+  <noscript><p class="container">Per il percorso guidato è necessario JavaScript. Puoi <a href="https://docs.google.com/forms/d/e/1FAIpQLSd8Vz9hgXzW0TqhN1DiXRrXZi-j7A3Vjb6yr4q_0z3sctdR5A/viewform">compilare il modulo originale</a>.</p></noscript>
 </body>
 </html>
