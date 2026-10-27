@@ -1,5 +1,5 @@
 import { sections } from './questions.js';
-import { buildGoogleSubmission, postGoogleSubmission } from './google-submission.js?v=20261027-confirmation';
+import { buildGoogleSubmission, postGoogleSubmission } from './google-submission.js?v=20261027-anonymous';
 
 const PREVIEW = new URLSearchParams(location.search).get('preview') === '1';
 const labels = ['I tuoi riferimenti', 'La tua organizzazione', 'Il tuo database', 'I macro-canali', 'Ultime indicazioni', 'Riepilogo e conferma'];
@@ -20,6 +20,7 @@ let current = 0;
 let furthest = 0;
 let saveAttempted = false;
 let previouslySubmitted = false;
+let inFlight = false;
 const compactIntro = window.matchMedia?.('(max-width: 800px)');
 if (compactIntro) {
   const setIntroLayout = () => { $('questionnaire-info').open = !compactIntro.matches; };
@@ -185,19 +186,17 @@ const confirmed = element('input'); confirmed.type='checkbox'; confirmed.id='con
 confirmation.append(confirmed,element('span','','Ho riletto il riepilogo e confermo le risposte del questionario.'));
 final.append(confirmation);
 const saveStatus=element('p','save-status'); saveStatus.id='registration-status'; saveStatus.setAttribute('role','status'); final.append(saveStatus);
-const googleConfirmation=element('section','google-confirmation'); googleConfirmation.id='google-confirmation'; googleConfirmation.hidden=true; googleConfirmation.setAttribute('aria-label','Conferma di registrazione Google');
-googleConfirmation.append(element('p','','La registrazione è completata quando nel riquadro compare la conferma di Google. Segui qui l’eventuale verifica richiesta.'));
-const googleFrameHost=element('div'); googleFrameHost.id='google-frame-host'; googleConfirmation.append(googleFrameHost); final.append(googleConfirmation);
-const retry=element('button','text-button','Il riquadro non funziona? Verifica in una scheda Google ↗'); retry.id='retry-questionnaire'; retry.type='button'; retry.hidden=true; final.append(retry);
 function answerText(record){const values=record.input?[record.input.value.trim()]:record.inputs.filter(input=>input.checked).map(input=>input===record.otherChoice?'Altro: '+(record.otherInput.value.trim()||'da specificare'):input.value);return values.filter(Boolean).join(' · ')||'Non compilato';}
 function updateReview(){for(const[id,record]of answers)reviewGroups[record.sectionIndex].rows.get(id).textContent=answerText(record);}
 function placeQuestionFields(inReview){for(const record of answers.values())(inReview?reviewGroups[record.sectionIndex].editor:panels[record.sectionIndex]).append(record.wrapper);if(inReview)updateReview();}
 function clearError(){ $('form-error').hidden=true;for(const input of form.querySelectorAll('input,textarea')){input.classList.remove('field-error');input.removeAttribute('aria-invalid');input.setCustomValidity('');}}
 function updateNav(){for(const[index,button]of[...$('step-list').querySelectorAll('button')].entries()){button.disabled=index>furthest;button.classList.toggle('complete',index<current);if(index===current)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');button.querySelector('.step-number').textContent=index<current?'✓':String(index+1);}}
 function showSection(index,focus=true){
+ if(inFlight)return;
  $('form-view').hidden=false;$('success-view').hidden=true;clearError();current=index;placeQuestionFields(index===5);panels.forEach((panel,i)=>panel.hidden=i!==index);
  $('section-title').textContent=headings[index];$('section-description').textContent=descriptions[index];$('step-label').textContent='SEZIONE '+String(index+1)+' DI 6';$('progress-description').textContent=labels[index];$('progress').value=index+1;
- $('back').hidden=index===0;$('required-note').hidden=index===5;$('next').textContent=index===5?(PREVIEW?'Simula la conferma →':'Conferma e registra'):(index===4?'Rivedi le risposte →':'Continua →');$('next').disabled=index===5&&saveAttempted;updateNav();$('sections').scrollTop=0;
+ const compact=index>0&&index<5;$('section-title').classList.toggle('sr-only',compact);$('section-description').hidden=compact;
+ $('back').hidden=index===0;$('required-note').hidden=index>0;$('next').textContent=index===5?(PREVIEW?'Simula la conferma →':'Conferma e registra'):(index===4?'Rivedi le risposte →':'Continua →');$('next').disabled=index===5&&saveAttempted;updateNav();$('sections').scrollTop=0;form.scrollTop=0;
  if(focus){$('section-title').focus({preventScroll:true});$('questionnaire').scrollIntoView({behavior:'instant',block:'start'});}
 }
 function validatePanel(index){
@@ -213,25 +212,36 @@ function validatePanel(index){
  if(current===5&&index<5)reviewGroups[index].details.open=true;else if(current!==index)showSection(index);
  invalid.setAttribute('aria-invalid','true');invalid.classList.add('field-error');$('form-error').textContent=invalid.validationMessage;$('form-error').hidden=false;invalid.focus();return false;
 }
-function invalidateSubmission(){saveAttempted=false;confirmed.checked=false;$('next').disabled=false;saveStatus.textContent='';retry.hidden=true;googleConfirmation.hidden=true;googleFrameHost.replaceChildren();}
+function invalidateSubmission(){saveAttempted=false;confirmed.checked=false;$('next').disabled=false;saveStatus.textContent='';}
 for(const eventName of['input','change'])form.addEventListener(eventName,event=>{clearError();if([...answers.values()].some(record=>record.wrapper.contains(event.target))){invalidateSubmission();if(current===5)updateReview();}});
 function validateQuestionnaire(){for(let index=0;index<5;index++)if(!validatePanel(index))return false;return true;}
 function questionnaireAnswers(){const values={},other={};for(const[id,record]of answers){values[id]=record.input?[record.input.value]:record.inputs.filter(input=>input.checked).map(input=>input.value);if(record.otherChoice?.checked)other[id]=record.otherInput.value;}return{values,other};}
-function registerQuestionnaire({showConfirmation=false,duplicateConfirmed=false}={}){
- if(saveAttempted)return;clearError();if(!validateQuestionnaire()||!validatePanel(5))return;
- if(PREVIEW){$('form-view').hidden=true;$('success-view').hidden=false;$('success-title').focus({preventScroll:true});$('announcement').textContent='Simulazione completata. Nessuna risposta o email è stata inviata.';return;}
- if(previouslySubmitted&&!duplicateConfirmed&&!window.confirm('Hai già avviato un invio. Ripeterlo potrebbe creare una seconda risposta. Continua solo se Google non ha registrato il questionario. Vuoi inviare nuovamente?'))return;
+function showCompletion(preview){
+ $('success-eyebrow').textContent=preview?'ANTEPRIMA COMPLETATA':'INVIO COMPLETATO';
+ $('success-title').textContent=preview?'Riepilogo confermato.':'Questionario inviato.';
+ $('success-description').textContent=preview?'Simulazione completata: nessuna risposta o email è stata inviata.':'La richiesta di invio è stata completata. Puoi tornare al riepilogo per consultare le risposte.';
+ $('form-view').hidden=true;$('success-view').hidden=false;$('success-title').focus({preventScroll:true});
+ $('announcement').textContent=preview?'Simulazione completata. Nessuna risposta o email è stata inviata.':'Richiesta di invio completata.';
+}
+async function registerQuestionnaire(){
+ if(saveAttempted||inFlight)return;clearError();if(!validateQuestionnaire()||!validatePanel(5))return;
+ if(PREVIEW){showCompletion(true);return;}
+ if(previouslySubmitted&&!window.confirm('Hai già avviato un invio. Ripeterlo potrebbe creare una seconda risposta. Verifica con il team se il questionario è già arrivato prima di procedere. Vuoi inviare nuovamente?'))return;
+ let restoreControls=()=>{};
  try{
   if(navigator.onLine===false)throw new Error('Sei offline. Riconnettiti e riprova: le risposte restano in questa pagina.');
-  const{values,other}=questionnaireAnswers();postGoogleSubmission(buildGoogleSubmission(values,other),{showConfirmation,confirmationContainer:showConfirmation?undefined:googleFrameHost});previouslySubmitted=true;
- }catch(error){saveStatus.textContent=error.message;return;}
- saveAttempted=true;$('next').disabled=true;retry.hidden=false;googleConfirmation.hidden=showConfirmation;
- saveStatus.textContent=showConfirmation?'Controlla l’esito nella scheda Google.':'Controlla la conferma di registrazione nel riquadro qui sotto.';
- if(!showConfirmation)googleConfirmation.scrollIntoView({behavior:'instant',block:'start'});
+  const{values,other}=questionnaireAnswers(),submission=buildGoogleSubmission(values,other);
+  inFlight=true;saveAttempted=true;form.setAttribute('aria-busy','true');
+  const controls=[...document.querySelectorAll('#survey input,#survey textarea,#survey button,#step-list button,#demo-button')].map(control=>[control,control.disabled]);
+  for(const[control]of controls)control.disabled=true;
+  restoreControls=()=>{for(const[control,disabled]of controls)control.disabled=disabled;};
+  saveStatus.textContent='Invio in corso…';$('next').textContent='Invio in corso…';$('announcement').textContent='Invio del questionario in corso.';
+  previouslySubmitted=true;await postGoogleSubmission(submission);showCompletion(false);
+ }catch(error){saveAttempted=false;saveStatus.textContent=error.message||'Invio non riuscito. Le risposte restano nel riepilogo.';$('announcement').textContent=saveStatus.textContent;}
+ finally{inFlight=false;restoreControls();form.removeAttribute('aria-busy');updateNav();$('next').disabled=saveAttempted;$('next').textContent='Conferma e registra';}
 }
 form.addEventListener('submit',event=>{event.preventDefault();if(current===5){registerQuestionnaire();return;}if(!validatePanel(current))return;furthest=Math.max(furthest,current+1);showSection(current+1);});
 $('back').addEventListener('click',()=>showSection(Math.max(0,current-1)));
-retry.addEventListener('click',()=>{if(!window.confirm('Questa verifica ripete l’invio e potrebbe creare una risposta duplicata. Continua solo se nel riquadro Google non compare la conferma di registrazione. Vuoi continuare?'))return;saveAttempted=false;registerQuestionnaire({showConfirmation:true,duplicateConfirmed:true});});
 $('edit-review').addEventListener('click',()=>{confirmed.checked=false;showSection(5);});
 $('demo-button').addEventListener('click',()=>{for(const record of answers.values()){if(record.input&&!record.input.value.trim()){const examples={email:'referente@example.org','2092238618':'Giulia Rossi','479301265':'Fondazione Esempio'};record.input.value=examples[record.question.id]||'Esempio dimostrativo: criteri e codici da condividere con il team.';}else if(record.inputs&&!record.inputs.some(input=>input.checked))record.inputs[0].checked=true;}furthest=5;showSection(5);$('announcement').textContent='Dati di esempio inseriti. Rileggi e conferma il riepilogo.';});
 showSection(0,false);

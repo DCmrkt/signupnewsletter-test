@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Analisi Benchmark 2027: compila il questionario, rivedi tutte le risposte e conferma il riepilogo finale.">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'none'; form-action https://docs.google.com; frame-src https://docs.google.com; object-src 'none'; base-uri 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src https://docs.google.com; form-action 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'">
   <title>Analisi Benchmark 2027 · Direct Channel</title>
   <link rel="icon" href="assets/favicon.ico">
   <link rel="preload" href="assets/fonts/inter-variable.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="data-lovers.css?v=20261027-reference">
-  <script type="module" src="app.js?v=20261027-reference"></script>
+  <script type="module" src="app.js?v=20261027-anonymous"></script>
 </head>
 <body id="top">
   <div class="ambient" aria-hidden="true"></div>
@@ -44,7 +44,7 @@
           </form>
         </div>
       </div>
-      <section id="success-view" class="success-card" hidden aria-labelledby="success-title"><span class="success-symbol" aria-hidden="true">✓</span><p class="eyebrow">ANTEPRIMA COMPLETATA</p><h2 id="success-title" tabindex="-1">Riepilogo confermato.</h2><p>Simulazione completata: nessuna risposta o email è stata inviata.</p><button id="edit-review" class="button button-primary" type="button">Torna al riepilogo ←</button></section>
+      <section id="success-view" class="success-card" hidden aria-labelledby="success-title"><span class="success-symbol" aria-hidden="true">✓</span><p class="eyebrow" id="success-eyebrow">INVIO COMPLETATO</p><h2 id="success-title" tabindex="-1">Questionario inviato.</h2><p id="success-description">La richiesta di invio è stata completata.</p><button id="edit-review" class="button button-primary" type="button">Torna al riepilogo ←</button></section>
       <p id="announcement" class="sr-only" role="status" aria-live="polite"></p>
     </section>
   </main>

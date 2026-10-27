@@ -1,30 +1,21 @@
 import {sections} from './questions.js';
 
-let deliverySequence=0;
-
-export function postGoogleSubmission(submission,{showConfirmation=false,confirmationContainer}={}){
-  const post=document.createElement('form');
-  post.method='POST';post.action=submission.action;post.hidden=true;post.acceptCharset='UTF-8';
-  let frame;
-  if(showConfirmation){post.target='_blank';post.rel='noopener';}
-  else{
-    frame=document.createElement('iframe');
-    frame.name='benchmark-google-delivery-'+(++deliverySequence);
-    frame.hidden=!confirmationContainer;frame.title='Conferma del questionario con Google';
-    if(!confirmationContainer)frame.setAttribute('aria-hidden','true');
-    if(confirmationContainer) {
-      const action=new URL(post.action); action.searchParams.set('embedded','true'); post.action=action.href;
-    }
-    post.target=frame.name;
-    // noopener would turn this named target into a new tab. Never infer success from iframe load.
-    (confirmationContainer || document.body).append(frame);
-  }
-  for(const [name,value] of submission.fields){
-    const field=document.createElement('input');field.type='hidden';field.name=name;field.value=value;post.append(field);
-  }
-  try{document.body.append(post);post.submit();}
-  catch(error){frame?.remove();throw error;}
-  finally{post.remove();}
+export async function postGoogleSubmission(submission){
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),20000);
+  try{
+    // Exclude Google login cookies and saved drafts, as on the other questionnaire landings.
+    const response=await fetch(submission.action,{
+      method:'POST',mode:'no-cors',credentials:'omit',
+      body:new URLSearchParams(submission.fields),signal:controller.signal
+    });
+    if(response.type!=='opaque'&&!response.ok)throw Error('Invio non riuscito. Le risposte restano nel riepilogo.');
+    // Opaque responses acknowledge transport only. Verify storage in the owner view during QA.
+    return {requestCompleted:true,registrationVerified:false};
+  }catch(error){
+    if(error.name==='AbortError')throw Error('Il server non ha risposto in tempo. Le risposte restano qui; verifica con il team prima di ripetere un invio che potrebbe essere già arrivato.');
+    throw error;
+  }finally{clearTimeout(timeout);}
 }
 
 export function buildGoogleSubmission(answers,other={}){
