@@ -68,6 +68,7 @@ progress{display:block;width:100%;height:3px;margin:14px 0 20px;appearance:none;
 
 /* Recap actions remain next to the section they affect. */
 .review-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:10px}
+#success-title:focus{outline:none}
 .review-toolbar h3{margin:0;font-size:22px;line-height:1.4}
 .review-toolbar .button{font-size:13px;min-height:44px;padding:9px 13px}
 .pdf-status{font-size:13px;color:var(--muted);margin:0 0 10px}.pdf-status:empty{display:none}
