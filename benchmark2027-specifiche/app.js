@@ -246,9 +246,9 @@ function showCompletion(preview,animate=true){
  $('success-view').querySelector('.success-symbol').textContent='✓';
  $('success-eyebrow').textContent=preview?'ANTEPRIMA COMPLETATA':'INVIO COMPLETATO';
  $('success-title').textContent=preview?'Riepilogo confermato.':'Questionario inviato.';
- $('success-description').textContent=preview?'Simulazione completata: nessuna risposta o email è stata inviata.':'Hai completato l’invio. La ricevuta automatica contiene tutte le tue risposte.';
+ $('success-description').textContent=preview?'Simulazione completata: nessuna risposta o email è stata inviata.':'Hai completato l’invio. La ricevuta automatica include il PDF con tutte le tue risposte.';
  $('receipt-to').textContent=answers.get('email').input.value.trim();
- $('receipt-description').textContent=preview?'Questa è un’anteprima: nessuna email viene inviata.':'La ricevuta viene inviata automaticamente dopo la registrazione delle risposte. Non occorre inviare altri messaggi.';
+ $('receipt-description').textContent=preview?'Questa è un’anteprima: nessuna email viene inviata.':'Dopo la registrazione riceverai automaticamente la ricevuta con tutte le risposte nel PDF allegato. Stefania è già in copia: non occorre inviare altri messaggi.';
  $('receipt-panel').hidden=false;
  $('form-view').hidden=true;$('success-view').hidden=false;$('success-title').focus({preventScroll:true});
  $('announcement').textContent=preview?'Simulazione completata. Nessuna risposta o email è stata inviata.':'Richiesta di invio completata.';
