@@ -1,6 +1,6 @@
 import { sections } from './questions.js';
 import { buildGoogleSubmission, postGoogleSubmission } from './google-submission.js?v=20261027-anonymous';
-import { createMailto, DEFAULT_SUBJECT, RECIPIENT, RECIPIENT_NAME } from './mailto.js?v=20261027-review';
+import { createMailto, DEFAULT_SUBJECT, RECIPIENT, RECIPIENT_NAME } from './mailto.js?v=20261028-stefania';
 import { createRecapSnapshot, downloadRecapPdf } from './recap-pdf.js?v=20261027-checked';
 import { launchConfetti } from './confetti.js';
 
