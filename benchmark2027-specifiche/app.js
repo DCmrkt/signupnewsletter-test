@@ -207,7 +207,29 @@ const saveStatus=element('p','save-status'); saveStatus.id='registration-status'
 function answerText(record){const values=record.input?[record.input.value.trim()]:record.inputs.filter(input=>input.checked).map(input=>input===record.otherChoice?'Altro: '+(record.otherInput.value.trim()||'da specificare'):input.value);return values.filter(Boolean).join(' · ')||'Non compilato';}
 function updateReview(){for(const[id,record]of answers)reviewGroups[record.sectionIndex].rows.get(id).textContent=answerText(record);}
 function placeQuestionFields(inReview){for(const record of answers.values())(inReview?reviewGroups[record.sectionIndex].editor:panels[record.sectionIndex]).append(record.wrapper);if(inReview)updateReview();}
-function clearError(){ $('form-error').hidden=true;for(const input of form.querySelectorAll('input,textarea')){input.classList.remove('field-error');input.removeAttribute('aria-invalid');input.setCustomValidity('');}}
+function clearError(){
+ $('form-error').hidden=true;
+ for(const input of form.querySelectorAll('input,textarea')){
+  const errorId=input.dataset.validationError;
+  if(errorId){const descriptions=(input.getAttribute('aria-describedby')||'').split(/\s+/).filter(id=>id&&id!==errorId);if(descriptions.length)input.setAttribute('aria-describedby',descriptions.join(' '));else input.removeAttribute('aria-describedby');delete input.dataset.validationError;}
+  input.classList.remove('field-error');input.removeAttribute('aria-invalid');input.setCustomValidity('');
+ }
+ for(const error of form.querySelectorAll('.field-validation-message'))error.hidden=true;
+ for(const field of form.querySelectorAll('.field-invalid'))field.classList.remove('field-invalid');
+}
+function showValidationError(input,message){
+ const field=input.closest('.field')||input.closest('.confirmation');
+ const target=input.closest('.other-answer')||field;
+ const errorId='validation-'+input.id;
+ let error=$(errorId);
+ if(!error){error=element('p','field-validation-message');error.id=errorId;if(field.matches('.confirmation'))field.after(error);else target.insertBefore(error,target.children[1]||null);}
+ error.textContent=message;error.hidden=false;field.classList.add('field-invalid');
+ input.dataset.validationError=errorId;
+ input.setAttribute('aria-describedby',[...new Set((input.getAttribute('aria-describedby')||'').split(/\s+/).filter(Boolean).concat(errorId))].join(' '));
+ input.setAttribute('aria-invalid','true');input.classList.add('field-error');
+ $('form-error').textContent=message;$('form-error').hidden=false;
+ input.focus({preventScroll:true});target.scrollIntoView({behavior:'instant',block:'start'});
+}
 function updateNav(){for(const[index,button]of[...$('step-list').querySelectorAll('button')].entries()){button.disabled=index>furthest;button.classList.toggle('complete',index<current);if(index===current)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');button.querySelector('.step-number').textContent=index<current?'✓':String(index+1);}}
 function showSection(index,focus=true){
  if(inFlight)return;
@@ -227,8 +249,9 @@ function validatePanel(index){
  if(index===5){confirmed.setCustomValidity(confirmed.checked?'':'Conferma di aver riletto tutte le risposte prima di registrare il questionario.');controls.push(confirmed);}
  const invalid=controls.find(input=>!input.disabled&&!input.checkValidity());
  if(!invalid)return true;
+ const message=invalid.type==='email'&&invalid.validity.typeMismatch?'Inserisci un indirizzo email valido.':invalid.validationMessage;
  if(current===5&&index<5)reviewGroups[index].details.open=true;else if(current!==index)showSection(index);
- invalid.setAttribute('aria-invalid','true');invalid.classList.add('field-error');$('form-error').textContent=invalid.validationMessage;$('form-error').hidden=false;invalid.focus();return false;
+ showValidationError(invalid,message);return false;
 }
 function resetSectionConfirmation(index){const button=reviewGroups[index].confirmSection;button.setAttribute('aria-pressed','false');button.textContent='Conferma';}
 function invalidateSubmission(){saveAttempted=false;confirmed.checked=false;$('next').disabled=false;if(current===5)$('next').textContent=PREVIEW?'Simula la conferma →':'Conferma e registra';saveStatus.textContent='';}
