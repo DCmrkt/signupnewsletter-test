@@ -217,6 +217,12 @@ function clearError(){
  for(const error of form.querySelectorAll('.field-validation-message'))error.hidden=true;
  for(const field of form.querySelectorAll('.field-invalid'))field.classList.remove('field-invalid');
 }
+function updateIdentity(){
+ const name=answers.get('2092238618').input.value.trim(),organization=answers.get('479301265').input.value.trim();
+ $('identity-name').textContent=name;$('identity-name').hidden=!name;
+ $('identity-organization').textContent=organization;$('identity-organization').hidden=!organization;
+ $('respondent-identity').hidden=!name&&!organization;$('header-edition').hidden=!!(name||organization);
+}
 function showValidationError(input,message){
  const field=input.closest('.field')||input.closest('.confirmation');
  const target=input.closest('.other-answer')||field;
@@ -236,7 +242,7 @@ function showSection(index,focus=true){
  $('form-view').hidden=false;$('success-view').hidden=true;clearError();current=index;placeQuestionFields(index===5);panels.forEach((panel,i)=>panel.hidden=i!==index);
  $('section-title').textContent=headings[index];$('section-description').textContent=descriptions[index];$('step-label').textContent='SEZIONE '+String(index+1)+' DI 6';$('progress-description').textContent=labels[index];$('progress').value=index+1;
  const compact=index>0&&index<5;$('section-title').classList.toggle('sr-only',compact);$('section-description').hidden=compact;
- $('back').hidden=index===0;$('required-note').hidden=index>0;$('next').textContent=index===5?(saveAttempted?'Torna alla conferma →':PREVIEW?'Simula la conferma →':'Conferma e registra'):(index===4?'Rivedi le risposte →':'Continua →');$('next').disabled=false;updateNav();$('sections').scrollTop=0;form.scrollTop=0;persistProgress();
+ $('back').hidden=index===0;$('required-note').hidden=index>0;$('next').textContent=index===5?(saveAttempted?'Torna alla conferma →':PREVIEW?'Simula la conferma →':'Conferma e registra'):(index===4?'Rivedi le risposte →':'Continua →');$('next').disabled=false;updateNav();updateIdentity();$('sections').scrollTop=0;form.scrollTop=0;persistProgress();
  if(focus){$('section-title').focus({preventScroll:true});$('questionnaire').scrollIntoView({behavior:'instant',block:'start'});}
 }
 function validatePanel(index){
@@ -255,7 +261,7 @@ function validatePanel(index){
 }
 function resetSectionConfirmation(index){const button=reviewGroups[index].confirmSection;button.setAttribute('aria-pressed','false');button.textContent='Conferma';}
 function invalidateSubmission(){saveAttempted=false;confirmed.checked=false;$('next').disabled=false;if(current===5)$('next').textContent=PREVIEW?'Simula la conferma →':'Conferma e registra';saveStatus.textContent='';}
-for(const eventName of['input','change'])form.addEventListener(eventName,event=>{clearError();const changed=[...answers.values()].find(record=>record.wrapper.contains(event.target));if(changed){invalidateSubmission();resetSectionConfirmation(changed.sectionIndex);if(current===5)updateReview();persistProgress();}});
+for(const eventName of['input','change'])form.addEventListener(eventName,event=>{clearError();const changed=[...answers.values()].find(record=>record.wrapper.contains(event.target));if(changed){invalidateSubmission();resetSectionConfirmation(changed.sectionIndex);if(current===5)updateReview();updateIdentity();persistProgress();}});
 function validateQuestionnaire(){for(let index=0;index<5;index++)if(!validatePanel(index))return false;return true;}
 function questionnaireAnswers(){const values={},other={};for(const[id,record]of answers){values[id]=record.input?[record.input.value]:record.inputs.filter(input=>input.checked).map(input=>input.value);if(record.otherChoice?.checked)other[id]=record.otherInput.value;}return{values,other};}
 pdfButton.addEventListener('click',async()=>{
