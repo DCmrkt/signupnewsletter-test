@@ -8,8 +8,8 @@
   <title>Analisi Benchmark 2027 · Direct Channel</title>
   <link rel="icon" href="assets/favicon.ico">
   <link rel="preload" href="assets/fonts/inter-variable.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="data-lovers.css?v=20261028-stefania">
-  <script type="module" src="app.js?v=20261028-stefania"></script>
+  <link rel="stylesheet" href="data-lovers.css?v=20261028-progress">
+  <script type="module" src="app.js?v=20261028-progress"></script>
 </head>
 <body id="top">
   <div class="ambient" aria-hidden="true"></div>
@@ -25,11 +25,12 @@
         <p class="lead">Aiutaci a rendere ancora più efficace per la tua Organizzazione l'analisi Benchmark 2027!</p>
         <details class="questionnaire-info" id="questionnaire-info" open><summary>Informazioni sul questionario</summary><div>
           <p class="intro-details">Il questionario prevede la compilazione di sei sezioni. Puoi tornare ai passaggi precedenti e aggiornare le risposte; prima dell’invio troverai un riepilogo completo da controllare.</p>
-          <p class="intro-confirmation"><strong>Nota</strong>: quando sei sicuro delle risposte e il questionario è completo, ti chiediamo gentilmente di inviarci una mail a <strong>stefania.sposaro@mondadori.it</strong> per confermarne la versione definitiva, così da poter procedere con l’elaborazione.</p>
+          <p class="intro-confirmation">Le risposte si salvano su questo dispositivo per 30 giorni. Dopo l’invio riceverai il riepilogo via email, con Stefania in copia. Per aggiornare le risposte, usa il link nella ricevuta.</p>
         </div></details>
       </div>
     </section>
     <section class="wizard-column" id="questionnaire" aria-label="Questionario Benchmark 2027">
+      <div id="draft-tools" class="draft-tools"><p id="draft-status" role="status">I progressi vengono salvati su questo dispositivo.</p><button id="clear-draft" class="text-button" type="button" hidden>Cancella dati locali</button></div>
       <div id="form-view">
         <div class="wizard-card">
           <div class="progress-row"><span id="step-label" aria-live="polite">SEZIONE 1 DI 6</span><span id="progress-description">I tuoi riferimenti</span></div>
@@ -47,14 +48,12 @@
       <section id="success-view" class="success-card" hidden aria-labelledby="success-title">
         <span class="success-symbol" aria-hidden="true">✓</span><p class="eyebrow" id="success-eyebrow">INVIO COMPLETATO</p>
         <h2 id="success-title" tabindex="-1">Questionario inviato.</h2><p id="success-description">La richiesta di invio è stata completata.</p>
-        <section id="mail-card" class="mail-card" hidden aria-labelledby="mail-title">
-          <h3 id="mail-title">Un messaggio per Stefania</h3><p class="mail-recipient">A: <strong id="mail-recipient">stefania.sposaro@mondadori.it</strong></p>
-          <div class="field"><label for="mail-subject">Oggetto</label><input id="mail-subject" class="text-input" type="text" maxlength="200" required></div>
-          <div class="field"><label for="mail-body">Il tuo messaggio</label><textarea id="mail-body" class="long-answer" rows="6" maxlength="4000" required aria-describedby="mail-help"></textarea></div>
-          <p id="mail-help" class="mail-help">Personalizza il testo, poi completa l’invio dalla tua app di posta.</p>
-          <p id="mail-error" class="form-error" role="alert" hidden></p>
-          <div class="mail-actions"><button id="edit-review" class="text-button" type="button">Rivedi le risposte ←</button><a id="open-email" class="button button-primary" role="link" aria-disabled="true">Apri email per Stefania ↗</a></div>
-          <p id="mail-status" class="mail-status" role="status"></p>
+        <section id="receipt-panel" class="receipt-panel" hidden aria-labelledby="receipt-title">
+          <h3 id="receipt-title">Il riepilogo arriva via email</h3>
+          <dl class="receipt-recipients"><div><dt>A</dt><dd id="receipt-to"></dd></div><div><dt>In copia</dt><dd id="receipt-cc">stefania.sposaro@mondadori.it</dd></div></dl>
+          <p id="receipt-description">La ricevuta viene inviata automaticamente dopo la registrazione delle risposte. Non occorre inviare altri messaggi.</p>
+          <p class="receipt-help">Potrebbero servire alcuni minuti: controlla anche la posta indesiderata. Il link nella ricevuta ti permette di modificare le risposte e ricevere un nuovo riepilogo.</p>
+          <button id="edit-review" class="button button-secondary" type="button">Rivedi le risposte e scarica il PDF</button>
         </section>
       </section>
       <p id="announcement" class="sr-only" role="status" aria-live="polite"></p>

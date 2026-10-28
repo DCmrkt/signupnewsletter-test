@@ -1,6 +1,6 @@
 import { sections } from './questions.js';
 import { buildGoogleSubmission, postGoogleSubmission } from './google-submission.js?v=20261027-anonymous';
-import { createMailto, DEFAULT_SUBJECT, RECIPIENT, RECIPIENT_NAME } from './mailto.js?v=20261028-stefania';
+import { saveProgress, loadProgress, clearProgress } from './progress-store.js?v=20261028-progress';
 import { createRecapSnapshot, downloadRecapPdf } from './recap-pdf.js?v=20261027-checked';
 import { launchConfetti } from './confetti.js';
 
@@ -25,8 +25,8 @@ let saveAttempted = false;
 let previouslySubmitted = false;
 let inFlight = false;
 let pdfGenerating = false;
-let messageOnlyView = false;
-const mailEdited={subject:false,body:false};
+let draftReady = false;
+let hasSavedProgress = false;
 const compactIntro = window.matchMedia?.('(max-width: 800px), (max-height: 820px)');
 if (compactIntro) {
   const setIntroLayout = () => { $('questionnaire-info').open = !compactIntro.matches; };
@@ -37,6 +37,7 @@ if (PREVIEW) {
   document.getElementById('mode-label').textContent = 'Anteprima interattiva';
   document.getElementById('service-notice').textContent = ' · Nessuna risposta o email viene inviata.';
   document.getElementById('demo-button').hidden = false;
+  document.getElementById('draft-tools').hidden = true;
 }
 
 function element(tag, className, text) {
@@ -130,7 +131,7 @@ function choiceField(question) {
         wrapper.querySelector('.other-answer').hidden = true;
       }
       clearError();
-      invalidateSubmission(); resetSectionConfirmation(answers.get(question.id).sectionIndex); updateReview();
+      invalidateSubmission(); resetSectionConfirmation(answers.get(question.id).sectionIndex); updateReview(); persistProgress();
     });
     wrapper.append(clear);
   }
@@ -213,7 +214,7 @@ function showSection(index,focus=true){
  $('form-view').hidden=false;$('success-view').hidden=true;clearError();current=index;placeQuestionFields(index===5);panels.forEach((panel,i)=>panel.hidden=i!==index);
  $('section-title').textContent=headings[index];$('section-description').textContent=descriptions[index];$('step-label').textContent='SEZIONE '+String(index+1)+' DI 6';$('progress-description').textContent=labels[index];$('progress').value=index+1;
  const compact=index>0&&index<5;$('section-title').classList.toggle('sr-only',compact);$('section-description').hidden=compact;
- $('back').hidden=index===0;$('required-note').hidden=index>0;$('next').textContent=index===5?(saveAttempted?'Torna al messaggio →':PREVIEW?'Simula la conferma →':'Conferma e registra'):(index===4?'Rivedi le risposte →':'Continua →');$('next').disabled=false;updateNav();$('sections').scrollTop=0;form.scrollTop=0;
+ $('back').hidden=index===0;$('required-note').hidden=index>0;$('next').textContent=index===5?(saveAttempted?'Torna alla conferma →':PREVIEW?'Simula la conferma →':'Conferma e registra'):(index===4?'Rivedi le risposte →':'Continua →');$('next').disabled=false;updateNav();$('sections').scrollTop=0;form.scrollTop=0;persistProgress();
  if(focus){$('section-title').focus({preventScroll:true});$('questionnaire').scrollIntoView({behavior:'instant',block:'start'});}
 }
 function validatePanel(index){
@@ -231,7 +232,7 @@ function validatePanel(index){
 }
 function resetSectionConfirmation(index){const button=reviewGroups[index].confirmSection;button.setAttribute('aria-pressed','false');button.textContent='Conferma';}
 function invalidateSubmission(){saveAttempted=false;confirmed.checked=false;$('next').disabled=false;if(current===5)$('next').textContent=PREVIEW?'Simula la conferma →':'Conferma e registra';saveStatus.textContent='';}
-for(const eventName of['input','change'])form.addEventListener(eventName,event=>{clearError();const changed=[...answers.values()].find(record=>record.wrapper.contains(event.target));if(changed){invalidateSubmission();resetSectionConfirmation(changed.sectionIndex);if(current===5)updateReview();}});
+for(const eventName of['input','change'])form.addEventListener(eventName,event=>{clearError();const changed=[...answers.values()].find(record=>record.wrapper.contains(event.target));if(changed){invalidateSubmission();resetSectionConfirmation(changed.sectionIndex);if(current===5)updateReview();persistProgress();}});
 function validateQuestionnaire(){for(let index=0;index<5;index++)if(!validatePanel(index))return false;return true;}
 function questionnaireAnswers(){const values={},other={};for(const[id,record]of answers){values[id]=record.input?[record.input.value]:record.inputs.filter(input=>input.checked).map(input=>input.value);if(record.otherChoice?.checked)other[id]=record.otherInput.value;}return{values,other};}
 pdfButton.addEventListener('click',async()=>{
@@ -241,36 +242,17 @@ pdfButton.addEventListener('click',async()=>{
  catch{pdfStatus.textContent='Non è stato possibile generare il PDF. Riprova: le risposte restano nella pagina.';}
  finally{pdfGenerating=false;pdfButton.disabled=inFlight;}
 });
-$('mail-title').textContent=`Un messaggio per ${RECIPIENT_NAME}`;
-$('mail-recipient').textContent=RECIPIENT;
-$('open-email').textContent=`Apri email per ${RECIPIENT_NAME} ↗`;
-function updateMailLink(showError=false){
- try{$('open-email').href=createMailto($('mail-subject').value,$('mail-body').value);$('open-email').setAttribute('aria-disabled','false');$('mail-error').hidden=true;return true;}
- catch(error){$('open-email').removeAttribute('href');$('open-email').setAttribute('aria-disabled','true');if(showError){$('mail-error').textContent=error.message;$('mail-error').hidden=false;}return false;}
-}
-function prepareMailDraft(){
- if(!mailEdited.subject)$('mail-subject').value=DEFAULT_SUBJECT;
- if(!mailEdited.body){
-  const organization=answers.get('479301265').input.value.trim(),name=answers.get('2092238618').input.value.trim();
-  $('mail-body').value='Ciao '+RECIPIENT_NAME+',\n\nho completato e inviato il questionario Benchmark 2027'+(organization?' per '+organization:'')+'.\nConfermo che le risposte sono definitive e potete procedere con l’elaborazione.\n\nResto a disposizione per eventuali chiarimenti.\n\nGrazie'+(name?',\n'+name:'!');
- }
- $('mail-card').hidden=false;$('mail-status').textContent='';updateMailLink();
-}
-for(const key of ['subject','body'])$('mail-'+key).addEventListener('input',()=>{mailEdited[key]=true;$('mail-status').textContent='';updateMailLink(true);});
-$('open-email').addEventListener('click',event=>{
- if(!updateMailLink(true)){event.preventDefault();$('mail-body').focus();return;}
- if(PREVIEW)event.preventDefault();
- $('mail-status').textContent=PREVIEW?'Anteprima: nessuna app di posta è stata aperta.':'Completa l’invio dalla tua app di posta.';
- launchConfetti($('open-email'));
-});
-function showCompletion(preview){
- messageOnlyView=false;$('edit-review').textContent='Rivedi le risposte ←';$('success-view').querySelector('.success-symbol').textContent='✓';
+function showCompletion(preview,animate=true){
+ $('success-view').querySelector('.success-symbol').textContent='✓';
  $('success-eyebrow').textContent=preview?'ANTEPRIMA COMPLETATA':'INVIO COMPLETATO';
  $('success-title').textContent=preview?'Riepilogo confermato.':'Questionario inviato.';
- $('success-description').textContent=preview?'Simulazione completata: nessuna risposta o email è stata inviata.':`Conferma ora a ${RECIPIENT_NAME} la versione definitiva delle tue risposte.`;
- prepareMailDraft();
+ $('success-description').textContent=preview?'Simulazione completata: nessuna risposta o email è stata inviata.':'Hai completato l’invio. La ricevuta automatica contiene tutte le tue risposte.';
+ $('receipt-to').textContent=answers.get('email').input.value.trim();
+ $('receipt-description').textContent=preview?'Questa è un’anteprima: nessuna email viene inviata.':'La ricevuta viene inviata automaticamente dopo la registrazione delle risposte. Non occorre inviare altri messaggi.';
+ $('receipt-panel').hidden=false;
  $('form-view').hidden=true;$('success-view').hidden=false;$('success-title').focus({preventScroll:true});
  $('announcement').textContent=preview?'Simulazione completata. Nessuna risposta o email è stata inviata.':'Richiesta di invio completata.';
+ persistProgress('completed');if(animate)launchConfetti($('success-title'));
 }
 async function registerQuestionnaire(){
  if(saveAttempted||inFlight)return;clearError();if(!validateQuestionnaire()||!validatePanel(5))return;
@@ -285,17 +267,52 @@ async function registerQuestionnaire(){
   for(const[control]of controls)control.disabled=true;
   restoreControls=()=>{for(const[control,disabled]of controls)control.disabled=disabled;};
   saveStatus.textContent='Invio in corso…';$('next').textContent='Invio in corso…';$('announcement').textContent='Invio del questionario in corso.';
-  previouslySubmitted=true;await postGoogleSubmission(submission);showCompletion(false);
+  previouslySubmitted=true;persistProgress('uncertain');await postGoogleSubmission(submission);showCompletion(false);
  }catch(error){saveAttempted=false;saveStatus.textContent=error.message||'Invio non riuscito. Le risposte restano nel riepilogo.';$('announcement').textContent=saveStatus.textContent;}
- finally{inFlight=false;restoreControls();pdfButton.disabled=pdfGenerating;form.removeAttribute('aria-busy');updateNav();$('next').disabled=saveAttempted;$('next').textContent='Conferma e registra';}
+ finally{inFlight=false;restoreControls();pdfButton.disabled=pdfGenerating;form.removeAttribute('aria-busy');updateNav();$('next').disabled=saveAttempted;$('next').textContent='Conferma e registra';persistProgress();}
 }
 form.addEventListener('submit',event=>{event.preventDefault();if(inFlight)return;if(current===5){if(saveAttempted)showCompletion(PREVIEW);else registerQuestionnaire();return;}if(!validatePanel(current))return;furthest=Math.max(furthest,current+1);showSection(current+1);});
 $('back').addEventListener('click',()=>showSection(Math.max(0,current-1)));
-$('edit-review').addEventListener('click',()=>{const nextSection=messageOnlyView?0:5;messageOnlyView=false;confirmed.checked=false;showSection(nextSection);});
+$('edit-review').addEventListener('click',()=>{confirmed.checked=false;showSection(5);});
 $('demo-button').addEventListener('click',()=>{for(const record of answers.values()){if(record.input&&!record.input.value.trim()){const examples={email:'referente@example.org','2092238618':'Giulia Rossi','479301265':'Fondazione Esempio'};record.input.value=examples[record.question.id]||'Esempio dimostrativo: criteri e codici da condividere con il team.';}else if(record.inputs&&!record.inputs.some(input=>input.checked))record.inputs[0].checked=true;}furthest=5;showSection(5);$('announcement').textContent='Dati di esempio inseriti. Rileggi e conferma il riepilogo.';});
-showSection(0,false);
-if(new URLSearchParams(location.search).get('message')==='1'){
- messageOnlyView=true;prepareMailDraft();$('form-view').hidden=true;$('success-view').hidden=false;
- $('success-title').textContent='Prepara il messaggio.';$('success-description').textContent=`Se hai già inviato il questionario, conferma a ${RECIPIENT_NAME} la versione definitiva.`;
- $('success-view').querySelector('.success-symbol').textContent='↗';$('edit-review').textContent='Vai al questionario ←';
+function persistProgress(phase){
+ if(PREVIEW||!draftReady)return;
+ const data=questionnaireAnswers();
+ for(const[id,record]of answers)if(record.otherInput)data.other[id]=record.otherInput.value;
+ if(!previouslySubmitted&&!Object.values(data.values).some(values=>values.some(value=>value.length))&&!Object.values(data.other).some(value=>value.length)){
+  if(hasSavedProgress){const cleared=clearProgress();if(cleared.ok){hasSavedProgress=false;$('draft-status').textContent='Nessuna risposta salvata.';$('clear-draft').hidden=true;}else $('draft-status').textContent='Salvataggio locale non disponibile: tieni aperta la pagina per conservare le modifiche.';}
+  return;
+ }
+ const result=saveProgress({...data,current,furthest,previouslySubmitted,phase:phase||(inFlight||previouslySubmitted&&!saveAttempted?'uncertain':saveAttempted?'completed':'draft')});
+ $('draft-status').textContent=result.ok?'Progressi salvati su questo dispositivo.':'Salvataggio locale non disponibile: tieni aperta la pagina per conservare le risposte.';
+ if(result.ok)hasSavedProgress=true;
+ $('clear-draft').hidden=false;
 }
+function applyProgress(state){
+ for(const[id,record]of answers){
+  if(record.input)record.input.value=state.values[id][0]||'';
+  else for(const input of record.inputs)input.checked=state.values[id].includes(input.value);
+  if(record.otherInput){record.otherInput.value=state.other[id]||'';record.otherInput.disabled=!record.otherChoice.checked;record.otherInput.required=record.otherChoice.checked;record.wrapper.querySelector('.other-answer').hidden=!record.otherChoice.checked;}
+ }
+ current=state.current;furthest=state.furthest;previouslySubmitted=state.previouslySubmitted;saveAttempted=state.phase==='completed';
+ if(saveAttempted){try{const data=questionnaireAnswers();buildGoogleSubmission(data.values,data.other);}catch{saveAttempted=false;}}
+}
+$('clear-draft').addEventListener('click',()=>{
+ if(inFlight||!window.confirm('Vuoi cancellare le risposte salvate su questo dispositivo? Le risposte già inviate a Google resteranno registrate.'))return;
+ if(!clearProgress().ok){$('draft-status').textContent='Non è stato possibile cancellare i dati locali. Riprova dalle impostazioni del browser.';return;}
+ draftReady=false;for(const record of answers.values()){
+  if(record.input)record.input.value='';else for(const input of record.inputs)input.checked=false;
+  if(record.otherInput){record.otherInput.value='';record.otherInput.disabled=true;record.otherInput.required=false;record.wrapper.querySelector('.other-answer').hidden=true;}
+ }
+ reviewGroups.forEach((group,index)=>{group.details.open=false;resetSectionConfirmation(index);});
+ saveAttempted=false;previouslySubmitted=false;hasSavedProgress=false;furthest=0;confirmed.checked=false;saveStatus.textContent='';showSection(0);draftReady=true;
+ $('draft-status').textContent='Dati locali cancellati. Puoi iniziare un nuovo questionario.';$('clear-draft').hidden=true;
+});
+const restored=PREVIEW?{}:loadProgress();
+if(restored.state){hasSavedProgress=true;applyProgress(restored.state);}
+draftReady=true;showSection(current,false);
+if(saveAttempted)showCompletion(PREVIEW,false);
+if(restored.state){$('draft-status').textContent='Progressi ripristinati da questo dispositivo.';if(restored.state.phase==='uncertain'){saveStatus.textContent='Un invio precedente potrebbe essere già arrivato: controlla la ricevuta prima di ripetere l’invio.';}}
+else if(restored.error)$('draft-status').textContent=restored.error==='unavailable'?'Salvataggio locale non disponibile: tieni aperta la pagina per conservare le risposte.':'La bozza precedente non è leggibile. Puoi iniziare un nuovo questionario.';
+else if(restored.expired)$('draft-status').textContent='La bozza precedente è scaduta dopo 30 giorni.';
+window.addEventListener('pagehide',()=>persistProgress());
